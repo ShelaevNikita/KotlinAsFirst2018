@@ -2,6 +2,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
 import kotlin.math.max
 import kotlin.math.sqrt
 
@@ -62,7 +63,19 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    val c = age % 10
+    val b = age % 100
+    if ((age < 200) && (age > 0)) {
+        return when {
+            ((c >= 5) || (c == 0) || ((b > 10) && (b <= 19))) -> "$age лет"
+            (c == 1) -> "$age год"
+            (c > 1) && (c < 5) -> "$age года"
+            else -> "ошибка"
+        }
+    }
+    return age.toString()
+}
 
 /**
  * Простая
@@ -73,7 +86,13 @@ fun ageDescription(age: Int): String = TODO()
  */
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
-                   t3: Double, v3: Double): Double = TODO()
+                   t3: Double, v3: Double): Double {
+    val s1 = t1 * v1
+    val s2 = t2 * v2
+    val s3 = t3 * v3
+    val a = (s1 + s2 + s3) / 2
+    return a
+}
 
 /**
  * Простая
@@ -111,6 +130,7 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+
 
 /**
  * Средняя
