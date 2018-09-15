@@ -99,7 +99,7 @@ fun timeForHalfWay(t1: Double, v1: Double,
         (a < s1) -> r1
         ((a >= s1) && (a <= s2)) -> r2
         ((a > s2) && (a < s3)) -> r3
-        else -> a
+        else -> 0.0
     }
 }
 
