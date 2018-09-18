@@ -25,8 +25,7 @@ fun isNumberHappy(number: Int): Boolean {
     val a4 = (number - a3 * 100 - t) / 1000
     val s1 = a1 + a2
     val s2 = a3 + a4
-    val f = if (s1 == s2) true else false
-    return f
+    if (s1 == s2) return true else return false
 }
 
 /**
@@ -36,7 +35,11 @@ fun isNumberHappy(number: Int): Boolean {
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
+    val a = y1 - y2
+    val b = x1 - x2
+    if (((x1 == x2) || (y1 == y2)) || ((a == -b) || (-a == b) || (a == b) || (-a == -b))) return true else return false
+}
 
 
 /**
@@ -45,7 +48,16 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = TODO()
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int = TODO()
+fun daysInMonth(month: Int, year: Int): Int {
+    val b = month % 2
+    val a = year % 4
+    return when {
+        (month == 2) && ((a > 0) || (year == 1900)) -> 28
+        (a == 0) && (month == 2) -> 29
+        ((month <= 7) && (b == 1)) || ((month >= 8) && (b == 0)) -> 31
+        else -> 30
+    }
+}
 
 /**
  * Средняя
@@ -66,4 +78,14 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = TODO()
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val t1 = if (a <= r) 1 else 0
+    val t2 = if (a <= s) 1 else 0
+    val y1 = if (b <= r) 1 else 0
+    val y2 = if (b <= s) 1 else 0
+    val u1 = if (c <= r) 1 else 0
+    val u2 = if (c <= s) 1 else 0
+    if ((t1 * y2 == 1) || (t1 * u2 == 1) || (t2 * y1 == 1) || (t2 * u1 == 1) || (y1 * u2 == 1) || (y2 * u1 == 1)) {
+        return true
+    } else return false
+}
