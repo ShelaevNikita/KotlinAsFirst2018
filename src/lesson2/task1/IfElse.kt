@@ -99,7 +99,7 @@ fun timeForHalfWay(t1: Double, v1: Double,
     return when {
         (a < s1) -> r1
         ((a >= s1) && (a <= s1 + s2)) -> r2
-        ((a > s2) && (a < s3)) -> r3
+        ((a > s1 + s2) && (a < s1 + s2 + s3)) -> r3
         else -> 0.0
     }
 }
