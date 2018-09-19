@@ -67,7 +67,16 @@ fun daysInMonth(month: Int, year: Int): Int {
  * Вернуть true, если утверждение верно
  */
 fun circleInside(x1: Double, y1: Double, r1: Double,
-                 x2: Double, y2: Double, r2: Double): Boolean = TODO()
+                 x2: Double, y2: Double, r2: Double): Boolean {
+    val a = sqr(x1 - x2)
+    val b = sqr(y1 - y2)
+    val c = sqr(r2)
+    if ((a + b <= c) && (r1 <= r2)) {
+        if (((sqr(x1 + r1 - x2) + b) <= c) && (sqr(x1 - r1 - x2) + b) <= c) {
+            if (((sqr(y1 + r1 - y2) + a) <= c) && (sqr(y1 - r1 - y2) + a) <= c) return true else return false
+        } else return false
+    } else return false
+}
 
 /**
  * Средняя
@@ -79,13 +88,11 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val t1 = if (a <= r) 1 else 0
-    val t2 = if (a <= s) 1 else 0
-    val y1 = if (b <= r) 1 else 0
-    val y2 = if (b <= s) 1 else 0
-    val u1 = if (c <= r) 1 else 0
-    val u2 = if (c <= s) 1 else 0
-    if ((t1 * y2 == 1) || (t1 * u2 == 1) || (t2 * y1 == 1) || (t2 * u1 == 1) || (y1 * u2 == 1) || (y2 * u1 == 1)) {
-        return true
-    } else return false
+    val t1 = if ((a <= r) && (b <= s)) 1 else 0
+    val t2 = if ((a <= s) && (b <= r)) 1 else 0
+    val t3 = if ((a <= r) && (c <= s)) 1 else 0
+    val t4 = if ((a <= s) && (c <= r)) 1 else 0
+    val t5 = if ((b <= r) && (c <= s)) 1 else 0
+    val t6 = if ((b <= s) && (c <= r)) 1 else 0
+    if ((t1 == 1) || (t2 == 1) || (t3 == 1) || (t4 == 1) || (t5 == 1) || (t6 == 1)) return true else return false
 }
