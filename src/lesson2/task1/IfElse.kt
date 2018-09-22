@@ -99,7 +99,7 @@ fun timeForHalfWay(t1: Double, v1: Double,
     return when {
         (a < s1) -> r1
         ((a >= s1) && (a <= s1 + s2)) -> r2
-        ((a > s1 + s2) && (a < s1 + s2 + s3)) -> r3
+        a > s1 + s2 -> r3
         else -> 0.0
     }
 }
@@ -115,13 +115,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int {
-    return when {
-        ((rookX1 == kingX) || (rookY1 == kingY)) && ((rookX2 == kingX) || (rookY2 == kingY)) -> 3
-        (rookX1 == kingX) || (rookY1 == kingY) -> 1
-        (rookX2 == kingX) || (rookY2 == kingY) -> 2
-        else -> 0
-    }
+                       rookX2: Int, rookY2: Int): Int = when {
+    ((rookX1 == kingX) || (rookY1 == kingY)) && ((rookX2 == kingX) || (rookY2 == kingY)) -> 3
+    (rookX1 == kingX) || (rookY1 == kingY) -> 1
+    (rookX2 == kingX) || (rookY2 == kingY) -> 2
+    else -> 0
 }
 
 /**
@@ -156,10 +154,13 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val d1 = sqr(a) + sqr(b)
+    val d2 = sqr(c) + sqr(b)
+    val d3 = sqr(a) + sqr(c)
     return when {
         ((a + b < c) || (a + c < b) || (c + b < a)) -> -1
-        (sqr(a) + sqr(b) == sqr(c)) || (sqr(c) + sqr(b) == sqr(a)) || (sqr(a) + sqr(c) == sqr(b)) -> 1
-        (sqr(a) + sqr(b) > sqr(c)) && (sqr(c) + sqr(b) > sqr(a)) && (sqr(a) + sqr(c) > sqr(b)) -> 0
+        (d1 == sqr(c)) || (d2 == sqr(a)) || (d3 == sqr(b)) -> 1
+        (d1 > sqr(c)) && (d2 > sqr(a)) && (d3 > sqr(b)) -> 0
         else -> 2
     }
 }

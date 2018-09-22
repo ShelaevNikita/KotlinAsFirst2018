@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson1.task1
 
+import java.lang.Math.pow
 import kotlin.math.*
 
 /**
@@ -79,8 +80,8 @@ fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double {
  * Вывести значение того же угла в радианах (например, 0.63256).
  */
 fun angleInRadian(grad: Int, min: Int, sec: Int): Double {
-    val a = sec * 1 / 3600.0
-    val b = min * 1 / 60.0
+    val a = sec / 3600.0
+    val b = min / 60.0
    val angleInRadian = (grad + a + b) * PI / 180
     return angleInRadian
 }
@@ -99,7 +100,7 @@ fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double = sqrt(s
  * Пользователь задает целое число, большее 100 (например, 3801).
  * Определить третью цифру справа в этом числе (в данном случае 8).
  */
-fun thirdDigit(number: Int): Int = (number % 1000 - number % 100) / 100
+fun thirdDigit(number: Int): Int = number % 1000 / 100
 
 /**
  * Простая
@@ -109,8 +110,7 @@ fun thirdDigit(number: Int): Int = (number % 1000 - number % 100) / 100
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
 fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int {
-   val travelMinutes = (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
-    return (travelMinutes)
+    return (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
 }
 
 /**
@@ -122,7 +122,7 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  */
 fun accountInThreeYears(initial: Int, percent: Int): Double {
     val a = 1 + percent * 0.01
-    val accountInThreeYears = initial * a * a * a
+    val accountInThreeYears = initial * pow(a, 3.0)
     return accountInThreeYears
 }
 

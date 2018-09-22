@@ -19,13 +19,13 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  */
 fun isNumberHappy(number: Int): Boolean {
     val a1 = number % 10
-    val a2 = (number % 100 - a1) / 10
+    val a2 = number % 100 / 10
     val t = a2 * 10 + a1
     val a3 = (number % 1000 - t) / 100
     val a4 = (number - a3 * 100 - t) / 1000
     val s1 = a1 + a2
     val s2 = a3 + a4
-    if (s1 == s2) return true else return false
+    return s1 == s2
 }
 
 /**
@@ -38,7 +38,7 @@ fun isNumberHappy(number: Int): Boolean {
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
     val a = y1 - y2
     val b = x1 - x2
-    if (((x1 == x2) || (y1 == y2)) || ((a == -b) || (-a == b) || (a == b) || (-a == -b))) return true else return false
+    return ((x1 == x2) || (y1 == y2)) || ((a == -b) || (-a == b) || (a == b) || (-a == -b))
 }
 
 
@@ -49,13 +49,12 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int {
-    val b = month % 2
     val a = year % 4
     return when {
-        (month == 2) && ((a > 0) || (year == 1900)) -> 28
-        (a == 0) && (month == 2) -> 29
-        ((month <= 7) && (b == 1)) || ((month >= 8) && (b == 0)) -> 31
-        else -> 30
+        (month == 2) && ((a != 0) || (year == 1900)) -> 28
+        month == 2 -> 29
+        (month == 4) || (month == 6) || (month == 9) || (month == 11) -> 30
+        else -> 31
     }
 }
 
@@ -70,12 +69,9 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
                  x2: Double, y2: Double, r2: Double): Boolean {
     val a = sqr(x1 - x2)
     val b = sqr(y1 - y2)
-    val c = sqr(r2)
-    if ((a + b <= c) && (r1 <= r2)) {
-        if (((sqr(x1 + r1 - x2) + b) <= c) && (sqr(x1 - r1 - x2) + b) <= c) {
-            if (((sqr(y1 + r1 - y2) + a) <= c) && (sqr(y1 - r1 - y2) + a) <= c) return true else return false
-        } else return false
-    } else return false
+    return if ((a + b <= sqr(r2)) && (r1 <= r2)) {
+        a + b <= sqr(r1 - r2)
+    } else false
 }
 
 /**
@@ -94,5 +90,5 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
     val t4 = if ((a <= s) && (c <= r)) 1 else 0
     val t5 = if ((b <= r) && (c <= s)) 1 else 0
     val t6 = if ((b <= s) && (c <= r)) 1 else 0
-    if ((t1 == 1) || (t2 == 1) || (t3 == 1) || (t4 == 1) || (t5 == 1) || (t6 == 1)) return true else return false
+    return (t1 == 1) || (t2 == 1) || (t3 == 1) || (t4 == 1) || (t5 == 1) || (t6 == 1)
 }
