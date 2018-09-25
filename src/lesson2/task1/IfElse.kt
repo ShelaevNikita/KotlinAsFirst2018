@@ -70,12 +70,9 @@ fun ageDescription(age: Int): String {
         return when {
             ((c >= 5) || (c == 0) || ((b > 10) && (b <= 19))) -> "$age лет"
             (c == 1) -> "$age год"
-            (c > 1) && (c < 5) -> "$age года"
-            else -> "ошибка"
+            else -> "$age года"
         }
-    } else {
-        println("ошибка")
-    }
+    } else println("ошибка")
     return age.toString()
 }
 
@@ -99,8 +96,7 @@ fun timeForHalfWay(t1: Double, v1: Double,
     return when {
         (a < s1) -> r1
         ((a >= s1) && (a <= s1 + s2)) -> r2
-        a > s1 + s2 -> r3
-        else -> 0.0
+        else -> r3
     }
 }
 

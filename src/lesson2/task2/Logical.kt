@@ -17,15 +17,8 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean {
-    val a1 = number % 10
-    val a2 = number % 100 / 10
-    val a3 = number % 1000 / 100
-    val a4 = number / 1000
-    val s1 = a1 + a2
-    val s2 = a3 + a4
-    return s1 == s2
-}
+val isNumberHappy = fun(number: Int): Boolean =
+        number % 10 + number % 100 / 10 == number % 1000 / 100 + number / 1000
 
 /**
  * Простая
@@ -37,7 +30,7 @@ fun isNumberHappy(number: Int): Boolean {
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
     val a = y1 - y2
     val b = x1 - x2
-    return ((x1 == x2) || (y1 == y2)) || ((a == -b) || (-a == b) || (a == b) || (-a == -b))
+    return (a == 0) || (b == 0) || (a == b) || (-a == -b) || (a == -b) || (-a == b)
 }
 
 
@@ -47,14 +40,11 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int {
-    val a = year % 4
-    return when {
-        (month == 2) && ((a != 0) || (year == 1900)) -> 28
-        month == 2 -> 29
-        (month == 4) || (month == 6) || (month == 9) || (month == 11) -> 30
-        else -> 31
-    }
+fun daysInMonth(month: Int, year: Int): Int = when {
+    (month == 2) && ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0))) -> 29
+    month == 2 -> 28
+    (month == 4) || (month == 6) || (month == 9) || (month == 11) -> 30
+    else -> 31
 }
 
 /**
