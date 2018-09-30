@@ -61,7 +61,8 @@ fun main(args: Array<String>) {
  * Пользователь задает время в часах, минутах и секундах, например, 8:20:35.
  * Рассчитать время в секундах, прошедшее с начала суток (30035 в данном случае).
  */
-fun seconds(hours: Int, minutes: Int, seconds: Int) = hours * 3600 + minutes * 60 + seconds
+fun seconds(hours: Int, minutes: Int, seconds: Int) =
+        hours * 3600 + minutes * 60 + seconds
 
 /**
  * Тривиальная
@@ -119,7 +120,8 @@ val travelMinutes =
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
 val accountInThreeYears =
-        fun(initial: Int, percent: Int): Double = initial * pow(1 + percent * 0.01, 3.0)
+        fun(initial: Int, percent: Int): Double =
+                initial * pow(1 + percent * 0.01, 3.0)
 
 /**
  * Простая
