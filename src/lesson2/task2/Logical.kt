@@ -30,7 +30,7 @@ val isNumberHappy = fun(number: Int): Boolean =
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
     val a = y1 - y2
     val b = x1 - x2
-    return (a == 0) || (b == 0) || (a == b) || (-a == -b) || (a == -b) || (-a == b)
+    return (a == 0) || (b == 0) || (a / b == 1) || (a / b == -1)
 }
 
 
@@ -41,7 +41,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int = when {
-    (month == 2) && ((year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0))) -> 29
+    (month == 2) && ((year % 400 == 0) || ((year % 4 == 0)
+            && (year % 100 != 0))) -> 29
     month == 2 -> 28
     (month == 4) || (month == 6) || (month == 9) || (month == 11) -> 30
     else -> 31
@@ -79,5 +80,6 @@ fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
     val t4 = if ((a <= s) && (c <= r)) 1 else 0
     val t5 = if ((b <= r) && (c <= s)) 1 else 0
     val t6 = if ((b <= s) && (c <= r)) 1 else 0
-    return (t1 == 1) || (t2 == 1) || (t3 == 1) || (t4 == 1) || (t5 == 1) || (t6 == 1)
+    return (t1 == 1) || (t2 == 1) || (t3 == 1) ||
+            (t4 == 1) || (t5 == 1) || (t6 == 1)
 }

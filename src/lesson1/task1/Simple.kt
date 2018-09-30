@@ -1,8 +1,10 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson1.task1
 
 import java.lang.Math.pow
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.sqrt
 
 /**
  * Пример
@@ -104,8 +106,9 @@ fun thirdDigit(number: Int): Int = number % 1000 / 100
  * прибыл на станцию назначения в h2 часов m2 минут того же дня (например в 13:01).
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
-val travelMinutes = fun(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
-        (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
+val travelMinutes =
+        fun(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
+                (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
 
 
 /**
@@ -115,7 +118,8 @@ val travelMinutes = fun(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, 
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
-val accountInThreeYears = fun(initial: Int, percent: Int): Double = initial * pow(1 + percent * 0.01, 3.0)
+val accountInThreeYears =
+        fun(initial: Int, percent: Int): Double = initial * pow(1 + percent * 0.01, 3.0)
 
 /**
  * Простая
@@ -123,4 +127,5 @@ val accountInThreeYears = fun(initial: Int, percent: Int): Double = initial * po
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-val numberRevert = fun(number: Int): Int = number % 10 * 100 + number % 100 / 10 * 10 + number / 100
+fun numberRevert(number: Int): Int =
+        number % 10 * 100 + number % 100 / 10 * 10 + number / 100
