@@ -71,7 +71,7 @@ fun seconds(hours: Int, minutes: Int, seconds: Int) =
  * Определить длину того же отрезка в метрах (в данном случае 18.98).
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
-val lengthInMeters = fun(sagenes: Int, arshins: Int, vershoks: Int): Double =
+fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
         (sagenes * 48 + arshins * 16 + vershoks) * 0.04445
 
 /**
@@ -80,7 +80,7 @@ val lengthInMeters = fun(sagenes: Int, arshins: Int, vershoks: Int): Double =
  * Пользователь задает угол в градусах, минутах и секундах (например, 36 градусов 14 минут 35 секунд).
  * Вывести значение того же угла в радианах (например, 0.63256).
  */
-val angleInRadian = fun(grad: Int, min: Int, sec: Int): Double =
+fun angleInRadian(grad: Int, min: Int, sec: Int): Double =
         (grad + sec / 3600.0 + min / 60.0) * PI / 180
 
 /**
@@ -89,7 +89,7 @@ val angleInRadian = fun(grad: Int, min: Int, sec: Int): Double =
  * Найти длину отрезка, соединяющего точки на плоскости с координатами (x1, y1) и (x2, y2).
  * Например, расстояние между (3, 0) и (0, 4) равно 5
  */
-val trackLength = fun(x1: Double, y1: Double, x2: Double, y2: Double): Double =
+fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double =
         sqrt(sqr(x1 - x2) + sqr(y1 - y2))
 
 /**
