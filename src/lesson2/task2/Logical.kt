@@ -29,10 +29,10 @@ fun isNumberHappy(number: Int): Boolean =
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    val a = (y1 - y2).toDouble()
-    val b = (x1 - x2).toDouble()
-    return (a == 0.0) || (b == 0.0) ||
-            (a / b == 1.0) || (a / b == -1.0)
+    val a = (y1 - y2)
+    val b = (x1 - x2)
+    return (a == 0) || (b == 0) ||
+            ((a.toDouble() / b) == 1.0) || ((a.toDouble() / b) == -1.0)
 }
 
 
