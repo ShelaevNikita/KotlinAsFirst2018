@@ -222,26 +222,25 @@ fun collatzSteps(x: Int): Int {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    var s = 0.0
-    var c = 1.0
+    var s = 0
+    var c = 1
     val p = when {
         (x / PI) % 2.0 == 0.0 -> 0.0
         (x / PI) % 2.0 == 1.0 -> PI
-        ((x / PI) * 2) % 4.0 == 1.0 -> PI / 2
-        ((x / PI) * 2) % 4.0 == 3.0 ->
-            3 * PI / 2
+        ((x / PI) * 2.0) % 4.0 == 1.0 -> PI / 2.0
+        ((x / PI) * 2.0) % 4.0 == 3.0 ->
+            3.0 * PI / 2.0
         else -> x
     }
     var r = p
-    var z = p
-    while (abs(z) >= eps) {
+    do {
         s++
         c += 2
-        val f = (c *
-                factorial((c - 1).toInt()))
-        z = pow(-1.0, s) * pow(p, c) / f
+        val f = c * factorial(c - 1)
+        val z = pow(-1.0, s.toDouble()) *
+                pow(p, c.toDouble()) / f
         r += z
-    }
+    } while (abs(z) >= eps)
     return r
 }
 
@@ -253,14 +252,14 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    var s = 0.0
-    var c = 0.0
+    var s = 0
+    var c = 0
     val p = when {
         (x / PI) % 2.0 == 0.0 -> 0.0
         (x / PI) % 2.0 == 1.0 -> PI
-        ((x / PI) * 2) % 4.0 == 1.0 -> PI / 2
-        ((x / PI) * 2) % 4.0 == 3.0 ->
-            3 * PI / 2
+        ((x / PI) * 2.0) % 4.0 == 1.0 -> PI / 2.0
+        ((x / PI) * 2.0) % 4.0 == 3.0 ->
+            3.0 * PI / 2.0
         else -> x
     }
     var r = 1.0
@@ -268,9 +267,9 @@ fun cos(x: Double, eps: Double): Double {
         s++
         c += 2
         val f = c *
-                factorial((c - 1).toInt())
-        val z = pow(-1.0, s) *
-                pow(p, c) / f
+                factorial(c - 1)
+        val z = pow(-1.0, s.toDouble()) *
+                pow(p, c.toDouble()) / f
         r += z
     } while (abs(z) >= eps)
     return r
