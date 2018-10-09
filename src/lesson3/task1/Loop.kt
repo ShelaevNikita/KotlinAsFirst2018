@@ -105,11 +105,25 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    val d = if (n <= m) m else n
-    val a = m * n
-    var b = a
-    for (x in (a / 2) downTo d)
-        if ((x % m == 0) && (x % n == 0)) b = x
+    var x = 2
+    var b = 1
+    var m1 = m
+    var n1 = n
+    while ((n1 != 1) || (m1 != 1)) {
+        val f1 = n1 % x
+        val f2 = m1 % x
+        if ((f1 != 0) && (f2 != 0)) x++ else {
+            b *= x
+            when {
+                (f1 == 0) && (f2 == 0) -> {
+                    n1 /= x
+                    m1 /= x
+                }
+                f1 == 0 -> n1 /= x
+                else -> m1 /= x
+            }
+        }
+    }
     return b
 }
 
@@ -209,7 +223,7 @@ fun collatzSteps(x: Int): Int {
  */
 fun sin(x: Double, eps: Double): Double {
     var s = 0.0
-    var c = 1
+    var c = 1.0
     val p = when {
         (x / PI) % 2.0 == 0.0 -> 0.0
         (x / PI) % 2.0 == 1.0 -> PI
@@ -219,14 +233,15 @@ fun sin(x: Double, eps: Double): Double {
         else -> x
     }
     var r = p
-    do {
+    var z = p
+    while (abs(z) >= eps) {
         s++
         c += 2
-        val f = (c * factorial(c - 1))
-        val z = pow(-1.0, s) *
-                pow(p, c.toDouble()) / f
+        val f = (c *
+                factorial((c - 1).toInt()))
+        z = pow(-1.0, s) * pow(p, c) / f
         r += z
-    } while (abs(z) >= eps)
+    }
     return r
 }
 
@@ -238,8 +253,8 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    var s = 0
-    var c = 0
+    var s = 0.0
+    var c = 0.0
     val p = when {
         (x / PI) % 2.0 == 0.0 -> 0.0
         (x / PI) % 2.0 == 1.0 -> PI
@@ -252,9 +267,10 @@ fun cos(x: Double, eps: Double): Double {
     do {
         s++
         c += 2
-        val f = c * factorial(c - 1)
-        val z = pow(-1.0, s.toDouble()) *
-                pow(p, c.toDouble()) / f
+        val f = c *
+                factorial((c - 1).toInt())
+        val z = pow(-1.0, s) *
+                pow(p, c) / f
         r += z
     } while (abs(z) >= eps)
     return r
