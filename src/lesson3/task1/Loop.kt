@@ -108,7 +108,7 @@ fun lcm(m: Int, n: Int): Int {
     val d = if (n <= m) m else n
     val a = m * n
     var b = a
-    for (x in a downTo d)
+    for (x in (a / 2) downTo d)
         if ((x % m == 0) && (x % n == 0)) b = x
     return b
 }
@@ -120,7 +120,9 @@ fun lcm(m: Int, n: Int): Int {
  */
 fun minDivisor(n: Int): Int {
     var a = 0
-    for (x in n downTo 2) if (n % x == 0) a = x
+    for (x in (n / 2) downTo 2)
+        if (n % x == 0) a = x
+    if (a == 0) a = n
     return a
 }
 
@@ -131,7 +133,8 @@ fun minDivisor(n: Int): Int {
  */
 fun maxDivisor(n: Int): Int {
     var a = 0
-    for (x in 1..(n - 1)) if (n % x == 0) a = x
+    for (x in 1..(n - 1))
+        if (n % x == 0) a = x
     return a
 }
 
@@ -207,23 +210,23 @@ fun collatzSteps(x: Int): Int {
 fun sin(x: Double, eps: Double): Double {
     var s = 0.0
     var c = 1
-    val k = (2 * x).toInt()
     val p = when {
-        k % 4 == 0 -> 0.0
-        k % 2 == 0 -> PI
-        (k / 2) % 2 == 1 -> PI / 2
-        else -> 3 * PI / 2
+        (x / PI) % 2.0 == 0.0 -> 0.0
+        (x / PI) % 2.0 == 1.0 -> PI
+        ((x / PI) * 2) % 4.0 == 1.0 -> PI / 2
+        ((x / PI) * 2) % 4.0 == 3.0 ->
+            3 * PI / 2
+        else -> x
     }
-    var z = p
-    var r = 0.0
-    while (abs(z) >= eps) {
-        r += z
+    var r = p
+    do {
         s++
         c += 2
         val f = (c * factorial(c - 1))
-        z = pow(-1.0, s) *
+        val z = pow(-1.0, s) *
                 pow(p, c.toDouble()) / f
-    }
+        r += z
+    } while (abs(z) >= eps)
     return r
 }
 
@@ -237,23 +240,23 @@ fun sin(x: Double, eps: Double): Double {
 fun cos(x: Double, eps: Double): Double {
     var s = 0
     var c = 0
-    val k = (2 * x).toInt()
     val p = when {
-        k % 4 == 0 -> 0.0
-        k % 2 == 0 -> PI
-        (k / 2) % 2 == 1 -> PI / 2
-        else -> 3 * PI / 2
+        (x / PI) % 2.0 == 0.0 -> 0.0
+        (x / PI) % 2.0 == 1.0 -> PI
+        ((x / PI) * 2) % 4.0 == 1.0 -> PI / 2
+        ((x / PI) * 2) % 4.0 == 3.0 ->
+            3 * PI / 2
+        else -> x
     }
-    var z = p
     var r = 1.0
-    while (abs(z) >= eps) {
+    do {
         s++
         c += 2
         val f = c * factorial(c - 1)
-        z = pow(-1.0, s.toDouble()) *
+        val z = pow(-1.0, s.toDouble()) *
                 pow(p, c.toDouble()) / f
         r += z
-    }
+    } while (abs(z) >= eps)
     return r
 }
 

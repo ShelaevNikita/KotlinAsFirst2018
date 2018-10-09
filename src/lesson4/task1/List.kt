@@ -273,11 +273,11 @@ fun convert(n: Int, base: Int): List<Int> {
     val list = mutableListOf<Int>()
     if ((n >= 0) && (base > 1)) {
         var f = n
-        while (f != 0) {
+        do {
             val d = f % base
             f /= base
             list.add(0, d)
-        }
+        } while (f != 0)
     } else println("ошибка")
     return list
 }
@@ -295,7 +295,7 @@ fun convertToString(n: Int, base: Int): String {
     var p2 = ""
     if ((n >= 0) && (base > 1) && (base <= 36)) {
         var f = n
-        while (f != 0) {
+        do {
             val r = f % base
             val d = when (r) {
                 10 -> 'a'
@@ -328,7 +328,7 @@ fun convertToString(n: Int, base: Int): String {
             }
             f /= base
             p1 += d
-        }
+        } while (f != 0)
         for (i in 0..(p1.length - 1)) {
             val r = p1[p1.length - 1 - i]
             p2 += r
@@ -487,9 +487,10 @@ fun russian(n: Int): String {
     if ((n >= 1) && (n <= 999999)) {
         val f = (n / 1000) % 10
         var r = ""
+        val p = (n / 10000) % 10
         val d = when {
-            f == 1 -> " тысяча"
-            (f > 1) && (f < 5) ->
+            (f == 1) && (p != 1)-> " тысяча"
+            (f > 1) && (f < 5) && (p != 1) ->
                 " тысячи"
             else -> " тысяч"
         }
