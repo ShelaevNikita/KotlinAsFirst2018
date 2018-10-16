@@ -5,6 +5,7 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import java.lang.Math.pow
+import kotlin.math.max
 import kotlin.math.sqrt
 
 /**
@@ -119,9 +120,8 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  */
 fun abs(v: List<Double>): Double {
     var s = 0.0
-    if (v.isNotEmpty()) for (element in v) {
+    for (element in v)
         s += sqr(element)
-    }
     return sqrt(s)
 }
 
@@ -133,9 +133,9 @@ fun abs(v: List<Double>): Double {
 fun mean(list: List<Double>): Double {
     var d = 0.0
     val s = list.size
-    if (s == 0) return 0.0 else {
+    return if (s == 0) 0.0 else {
         for (element in list) d += element
-        return d / s
+        d / s
     }
 }
 
@@ -148,16 +148,14 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    var d = 0.0
     val s = list.size
-    if (s == 0) return list else {
-        for (element in list) d += element
-        val f = d / s
+    return if (s == 0) list else {
+        val f = mean(list)
         for (i in 0 until s) {
             val element = list[i] - f
             list[i] = element
         }
-        return list
+        list
     }
 }
 
@@ -170,9 +168,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Double>, b: List<Double>): Double {
     var x = 0.0
-    val f = if (a.size > b.size) b.size
-    else a.size
-    for (i in 0..(f - 1)) {
+    val f = max(a.size, b.size)
+    for (i in 0 until f) {
         val d = a[i] * b[i]
         x += d
     }
@@ -190,7 +187,7 @@ fun times(a: List<Double>, b: List<Double>): Double {
 fun polynom(p: List<Double>, x: Double): Double {
     var s = 0.0
     var t = 0.0
-    for (i in 0..(p.size - 1)) {
+    for (i in 0 until p.size) {
         val v = p[i] * pow(x, s)
         t += v
         s++
@@ -209,7 +206,7 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    for (i in 1..(list.size - 1)) {
+    for (i in 1 until list.size) {
         list[i] += list[i - 1]
     }
     return list
@@ -243,23 +240,15 @@ fun factorize(n: Int): List<Int> {
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
 fun factorizeToString(n: Int): String {
-    val list = mutableListOf<Int>()
-    var d = n
-    var x = 2
-    while (d != 1) {
-        if (d % x == 0) {
-            list.add(x)
-            d /= x
-        } else x += 1
-    }
-    list.sorted()
-    var t = list[0].toString()
+    val t =
+            factorize(n)
     val c = '*'
-    for (i in 1..(list.size - 1)) {
-        t += c
-        t += list[i]
+    var g = t[0].toString()
+    for (x in 1 until t.size) {
+        g += c
+        g += t[x].toString()
     }
-    return t
+    return g
 }
 
 /**
@@ -297,42 +286,12 @@ fun convertToString(n: Int, base: Int): String {
         var f = n
         do {
             val r = f % base
-            val d = when (r) {
-                10 -> 'a'
-                11 -> 'b'
-                12 -> 'c'
-                13 -> 'd'
-                14 -> 'e'
-                15 -> 'f'
-                16 -> 'g'
-                17 -> 'h'
-                18 -> 'i'
-                19 -> 'j'
-                20 -> 'k'
-                21 -> 'l'
-                22 -> 'm'
-                23 -> 'n'
-                24 -> 'o'
-                25 -> 'p'
-                26 -> 'q'
-                27 -> 'r'
-                28 -> 's'
-                29 -> 't'
-                30 -> 'u'
-                31 -> 'v'
-                32 -> 'w'
-                33 -> 'x'
-                34 -> 'y'
-                35 -> 'z'
-                else -> r.toChar() + 48
-            }
+            val d = if (r >= 10) (r + 87).toChar()
+            else (r + 48).toChar()
             f /= base
             p1 += d
         } while (f != 0)
-        for (i in 0..(p1.length - 1)) {
-            val r = p1[p1.length - 1 - i]
-            p2 += r
-        }
+        p2 = p1.reversed()
     } else println("ошибка")
     return p2
 }
@@ -365,36 +324,10 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var r = 0
     if ((base > 1) && (base <= 36)) {
-        for (i in 0..(str.length - 1)) {
-            val t = when (str[i]) {
-                'a' -> 10
-                'b' -> 11
-                'c' -> 12
-                'd' -> 13
-                'e' -> 14
-                'f' -> 15
-                'g' -> 16
-                'h' -> 17
-                'i' -> 18
-                'j' -> 19
-                'k' -> 20
-                'l' -> 21
-                'm' -> 22
-                'n' -> 23
-                'o' -> 24
-                'p' -> 25
-                'q' -> 26
-                'r' -> 27
-                's' -> 28
-                't' -> 29
-                'u' -> 30
-                'v' -> 31
-                'w' -> 32
-                'x' -> 33
-                'y' -> 34
-                'z' -> 35
-                else -> str[i].toInt() - 48
-            }
+        for (i in 0 until str.length) {
+            val t = if (str[i].toInt() <= 87)
+                str[i].toInt() - 48
+            else str[i].toInt() - 87
             r += (t * pow(base.toDouble(),
                     (str.length - 1 - i).toDouble()))
                     .toInt()
@@ -413,9 +346,9 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     var z = n
-    var r = ""
     var s = ""
     while (z != 0) {
+        var r = ""
         when {
             z / 1000 != 0 -> {
                 r = "M"
@@ -489,7 +422,7 @@ fun russian(n: Int): String {
         var r = ""
         val p = (n / 10000) % 10
         val d = when {
-            (f == 1) && (p != 1)-> " тысяча"
+            (f == 1) && (p != 1) -> " тысяча"
             (f > 1) && (f < 5) && (p != 1) ->
                 " тысячи"
             else -> " тысяч"

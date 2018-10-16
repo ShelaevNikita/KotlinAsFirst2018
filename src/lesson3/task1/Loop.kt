@@ -90,12 +90,12 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     var c = 1
     var a = 1
-    if (n <= 2) return c else {
+    return if (n <= 2) c else {
         for (x in 3..n) {
             if (x % 2 == 1) c += a else a += c
         }
+        if (n % 2 == 1) c else a
     }
-    return if (n % 2 == 1) c else a
 }
 
 /**
@@ -146,9 +146,13 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    var a = 0
-    for (x in 1..(n - 1))
-        if (n % x == 0) a = x
+    var a = 1
+    for (x in (n / 2)
+            downTo minDivisor(n))
+        if (n % x == 0) {
+            a = x
+            break
+        }
     return a
 }
 
@@ -224,19 +228,13 @@ fun collatzSteps(x: Int): Int {
 fun sin(x: Double, eps: Double): Double {
     var s = 0
     var c = 1
-    val p = when {
-        (x / PI) % 2.0 == 0.0 -> 0.0
-        (x / PI) % 2.0 == 1.0 -> PI
-        ((x / PI) * 2.0) % 4.0 == 1.0 -> PI / 2.0
-        ((x / PI) * 2.0) % 4.0 == 3.0 ->
-            3.0 * PI / 2.0
-        else -> x
-    }
+    val p = ((x / PI * 2.0) % 4.0) * PI / 2
     var r = p
+    var f = 1.0
     do {
         s++
         c += 2
-        val f = c * factorial(c - 1)
+        f *= c * (c - 1)
         val z = pow(-1.0, s.toDouble()) *
                 pow(p, c.toDouble()) / f
         r += z
@@ -254,20 +252,13 @@ fun sin(x: Double, eps: Double): Double {
 fun cos(x: Double, eps: Double): Double {
     var s = 0
     var c = 0
-    val p = when {
-        (x / PI) % 2.0 == 0.0 -> 0.0
-        (x / PI) % 2.0 == 1.0 -> PI
-        ((x / PI) * 2.0) % 4.0 == 1.0 -> PI / 2.0
-        ((x / PI) * 2.0) % 4.0 == 3.0 ->
-            3.0 * PI / 2.0
-        else -> x
-    }
+    val p = ((x / PI * 2.0) % 4.0) * PI / 2
     var r = 1.0
+    var f = 1.0
     do {
         s++
         c += 2
-        val f = c *
-                factorial(c - 1)
+        f *= c * (c - 1)
         val z = pow(-1.0, s.toDouble()) *
                 pow(p, c.toDouble()) / f
         r += z
@@ -284,16 +275,11 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun revert(n: Int): Int {
     var t = 0
-    var s = 0
     var d = n
-    do {
-        d /= 10
-        s++
-    } while (d != 0)
+    val s = digitNumber(n)
     for (z in 1..s) {
-        val j = (n % pow(10.0, z.toDouble()) /
-                pow(10.0, (z - 1).toDouble())).toInt()
-        t += (j * pow(10.0, (s - z).toDouble())).toInt()
+        t = t * 10 + d % 10
+        d /= 10
     }
     return t
 }
@@ -307,27 +293,8 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var s = 0
-    var d = n
-    do {
-        d /= 10
-        s++
-    } while (d != 0)
-    var p = 0
-    if (s == 1) return true else {
-        for (z in 1..s) {
-            val j = ((n % pow(10.0, z.toDouble())) /
-                    pow(10.0, (z - 1).toDouble())).toInt()
-            val t = ((n % pow(10.0, (s + 1 - z).toDouble())) /
-                    pow(10.0, ((s - z).toDouble()))).toInt()
-            if (j == t) {
-                p++
-            } else break
-        }
-    }
-    return p == s
-}
+fun isPalindrome(n: Int): Boolean =
+        n == revert(n)
 
 /**
  * Средняя
@@ -339,16 +306,12 @@ fun isPalindrome(n: Int): Boolean {
  */
 fun hasDifferentDigits(n: Int): Boolean {
     var f = 0
-    var s = 0
-    var d = n
-    do {
-        d /= 10
-        s++
-    } while (d != 0)
+    val s = digitNumber(n)
     val b = n % 10
+    var m = n
     for (x in 1..s) {
-        val a = ((n % pow(10.0, x.toDouble())) /
-                pow(10.0, (x - 1).toDouble())).toInt()
+        val a = m % 10
+        m /= 10
         if (a != b) {
             f++
             break
@@ -368,20 +331,16 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun squareSequenceDigit(n: Int): Int {
     var s2 = 0
-    var s1 = 0
     var f = 0
     for (x in 1..n) {
-        var c = sqr(x)
+        val c = sqr(x)
         f = c
-        do {
-            c /= 10
-            s1++
-        } while (c != 0)
+        val s1 = digitNumber(c)
         s2 += s1
-        s1 = 0
         if (s2 >= n) break
     }
-    return (f / (pow(10.0, (s2 - n).toDouble())).toInt()) % 10
+    for (x in 1..(s2 - n)) f /= 10
+    return f % 10
 }
 
 /**
@@ -394,34 +353,29 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var q = 2
     var c = 1
     var a = 1
     var k = 0
-    var d = 0
-    if (n <= 2) return c else {
+    var d = 2
+    var q: Int
+    var t: Int
+    return if (n <= 2) c else {
         for (x in 3..n) {
             if (x % 2 == 1) {
                 c += a
-                var t = c
+                t = c
                 k = c
-                do {
-                    t /= 10
-                    q++
-                } while (t != 0)
+                q = digitNumber(t)
             } else {
                 a += c
-                var t = a
+                t = a
                 k = a
-                do {
-                    t /= 10
-                    q++
-                } while (t != 0)
+                q = digitNumber(t)
             }
             d += q
-            q = 0
             if (d >= n) break
         }
-        return (k / pow(10.0, (d - n).toDouble())).toInt() % 10
+        for (x in 1..(d - n)) k /= 10
+        k % 10
     }
 }
