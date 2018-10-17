@@ -145,16 +145,8 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var a = 1
-    for (x in (n / 2)
-            downTo minDivisor(n))
-        if (n % x == 0) {
-            a = x
-            break
-        }
-    return a
-}
+fun maxDivisor(n: Int): Int =
+        n / minDivisor(n)
 
 /**
  * Простая
@@ -333,9 +325,8 @@ fun squareSequenceDigit(n: Int): Int {
     var s2 = 0
     var f = 0
     for (x in 1..n) {
-        val c = sqr(x)
-        f = c
-        val s1 = digitNumber(c)
+        f = sqr(x)
+        val s1 = digitNumber(f)
         s2 += s1
         if (s2 >= n) break
     }
@@ -353,29 +344,24 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var c = 1
-    var a = 1
-    var k = 0
-    var d = 2
-    var q: Int
-    var t: Int
-    return if (n <= 2) c else {
+    var a1 = 1
+    var a2 = 1
+    var lastNumber = 0
+    var allFigures = 2
+    return if (n <= 2) a1 else {
         for (x in 3..n) {
             if (x % 2 == 1) {
-                c += a
-                t = c
-                k = c
-                q = digitNumber(t)
+                a2 += a1
+                lastNumber = a2
             } else {
-                a += c
-                t = a
-                k = a
-                q = digitNumber(t)
+                a1 += a2
+                lastNumber = a1
             }
-            d += q
-            if (d >= n) break
+            allFigures += digitNumber(lastNumber)
+            if (allFigures >= n) break
         }
-        for (x in 1..(d - n)) k /= 10
-        k % 10
+        for (x in 1..(allFigures - n))
+            lastNumber /= 10
+        lastNumber % 10
     }
 }

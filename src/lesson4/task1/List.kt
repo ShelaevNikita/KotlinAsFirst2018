@@ -133,7 +133,7 @@ fun abs(v: List<Double>): Double {
 fun mean(list: List<Double>): Double {
     var d = 0.0
     val s = list.size
-    return if (s == 0) 0.0 else {
+    return if (list.isEmpty()) 0.0 else {
         for (element in list) d += element
         d / s
     }
@@ -149,14 +149,12 @@ fun mean(list: List<Double>): Double {
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     val s = list.size
-    return if (s == 0) list else {
-        val f = mean(list)
-        for (i in 0 until s) {
-            val element = list[i] - f
-            list[i] = element
-        }
-        list
+    val f = mean(list)
+    for (i in 0 until s) {
+        val element = list[i] - f
+        list[i] = element
     }
+    return list
 }
 
 /**
@@ -242,13 +240,13 @@ fun factorize(n: Int): List<Int> {
 fun factorizeToString(n: Int): String {
     val t =
             factorize(n)
-    val c = '*'
-    var g = t[0].toString()
+    val g = StringBuilder()
+    g.append(t[0])
     for (x in 1 until t.size) {
-        g += c
-        g += t[x].toString()
+        g.append('*')
+        g.append(t[x])
     }
-    return g
+    return g.toString()
 }
 
 /**
@@ -280,8 +278,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun convertToString(n: Int, base: Int): String {
-    var p1 = ""
-    var p2 = ""
+    val p1 = StringBuilder()
     if ((n >= 0) && (base > 1) && (base <= 36)) {
         var f = n
         do {
@@ -289,11 +286,10 @@ fun convertToString(n: Int, base: Int): String {
             val d = if (r >= 10) (r + 87).toChar()
             else (r + 48).toChar()
             f /= base
-            p1 += d
+            p1.append(d)
         } while (f != 0)
-        p2 = p1.reversed()
     } else println("ошибка")
-    return p2
+    return p1.reversed().toString()
 }
 
 /**
@@ -346,66 +342,64 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     var z = n
-    var s = ""
-    while (z != 0) {
-        var r = ""
+    val s = StringBuilder()
+    if (n > 0) while (z != 0) {
         when {
             z / 1000 != 0 -> {
-                r = "M"
+                s.append("M")
                 z -= 1000
             }
             z - 900 >= 0 -> {
-                r = "CM"
+                s.append("CM")
                 z -= 900
             }
             z / 500 != 0 -> {
-                r = "D"
+                s.append("D")
                 z -= 500
             }
             z - 400 >= 0 -> {
-                r = "CD"
+                s.append("CD")
                 z -= 400
             }
             z / 100 != 0 -> {
-                r = "C"
+                s.append("C")
                 z -= 100
             }
             z - 90 >= 0 -> {
-                r = "XC"
+                s.append("XC")
                 z -= 90
             }
             z / 50 != 0 -> {
-                r = "L"
+                s.append("L")
                 z -= 50
             }
             z - 40 >= 0 -> {
-                r = "XL"
+                s.append("XL")
                 z -= 40
             }
             z / 10 != 0 -> {
-                r = "X"
+                s.append("X")
                 z -= 10
             }
             z - 9 >= 0 -> {
-                r = "IX"
+                s.append("IX")
                 z -= 9
             }
             z / 5 != 0 -> {
-                r = "V"
+                s.append("V")
                 z -= 5
             }
             z - 4 >= 0 -> {
-                r = "IV"
+                s.append("IV")
                 z -= 4
             }
             z - 1 >= 0 -> {
-                r = "I"
+                s.append("I")
                 z -= 1
             }
         }
-        s += r
-    }
-    return s
+    } else println("ошибка")
+    return s.toString()
 }
 
 /**
@@ -416,10 +410,10 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    var s = ""
+    val s = StringBuilder()
     if ((n >= 1) && (n <= 999999)) {
         val f = (n / 1000) % 10
-        var r = ""
+        val r = StringBuilder()
         val p = (n / 10000) % 10
         val d = when {
             (f == 1) && (p != 1) -> " тысяча"
@@ -427,7 +421,7 @@ fun russian(n: Int): String {
                 " тысячи"
             else -> " тысяч"
         }
-        val list = listOf<String>("", "один",
+        val list = listOf("", "один",
                 "два", "три", "четыр", "пят",
                 "шест", "сем", "восем", "девят")
         val k1 = "надцать"
@@ -444,58 +438,58 @@ fun russian(n: Int): String {
             val c4 = (n / pow(10.0, -3.0 +
                     l * 3).toInt()) % 100
             if ((c1 != 0) && (l == 1)
-                    && (s != "")) s += " "
+                    && (s.isNotEmpty())) s.append(' ')
             for (x in 5..9) {
                 when (c1) {
-                    1 -> r = "сто"
-                    2 -> r = "двести"
-                    3 -> r = "триста"
-                    4 -> r = "четыреста"
-                    x -> r = list[x] + k2
+                    1 -> r.append("сто")
+                    2 -> r.append("двести")
+                    3 -> r.append("триста")
+                    4 -> r.append("четыреста")
+                    x -> r.append(list[x] + k2)
                 }
-                if (r != "") break
+                if (r.isNotEmpty()) break
             }
-            s += r
-            if ((c2 != 0) && (s != ""))
-                s += " "
-            r = ""
+            s.append(r)
+            if ((c2 != 0) && (s.isNotEmpty()))
+                s.append(' ')
+            r.delete(0, 16)
             for (x in 1..9) {
                 when (c2) {
                     1 -> when (c4) {
-                        10 -> r = "десять"
-                        12 -> r = "двенадцать"
-                        10 + x -> r = list[x] + k1
+                        10 -> r.append("десять")
+                        12 -> r.append("двенадцать")
+                        10 + x -> r.append(list[x] + k1)
                     }
-                    2 -> r = "двадцать"
-                    3 -> r = "тридцать"
-                    4 -> r = "сорок"
-                    9 -> r = "девяносто"
-                    x -> r = list[x] + k3
+                    2 -> r.append("двадцать")
+                    3 -> r.append("тридцать")
+                    4 -> r.append("сорок")
+                    9 -> r.append("девяносто")
+                    x -> r.append(list[x] + k3)
                 }
-                if (r != "") break
+                if (r.isNotEmpty()) break
             }
-            s += r
+            s.append(r)
             if ((c3 != 0) && (c2 != 1)
-                    && (s != "")) s += " "
-            r = ""
+                    && (s.isNotEmpty())) s.append(' ')
+            r.delete(0, 16)
             if (c2 != 1) {
                 for (x in 5..9) {
                     when (c3) {
-                        1 -> r = if (l == 2)
-                            "одна" else "один"
-                        2 -> r = if (l == 2)
-                            "две" else "два"
-                        3 -> r = "три"
-                        4 -> r = "четыре"
-                        x -> r = list[x] + 'ь'
+                        1 -> r.append(if (l == 2)
+                            "одна" else "один")
+                        2 -> r.append(if (l == 2)
+                            "две" else "два")
+                        3 -> r.append("три")
+                        4 -> r.append("четыре")
+                        x -> r.append(list[x] + 'ь')
                     }
-                    if (r != "") break
+                    if (r.isNotEmpty()) break
                 }
-            } else r = ""
-            s += r
-            r = ""
-            if (l == 2) s += d
+            } else r.delete(0, 16)
+            s.append(r)
+            r.delete(0, 16)
+            if (l == 2) s.append(d)
         }
     } else println("ошибка")
-    return s
+    return s.toString()
 }
