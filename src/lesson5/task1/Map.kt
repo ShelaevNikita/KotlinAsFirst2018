@@ -221,8 +221,11 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>,
             s = minOf(h, s)
         }
         val f = (kind to s)
-        for (a in stuff.keys)
-            if (stuff[a] == f) d.append(a)
+        for ((a, b) in stuff)
+            if (b == f) {
+                d.append(a)
+                break
+            }
     }
     return (if (e > 0) d.toString() else null)
 }
