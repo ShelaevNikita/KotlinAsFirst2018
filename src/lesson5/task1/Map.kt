@@ -336,8 +336,10 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val f = mutableSetOf<Char>()
     for (x1 in d)
         f += x1
-    for (x2 in chars)
+    for (x2 in chars) {
+        x2.toLowerCase()
         if (x2 in f) result += 1
+    }
     return (result == f.size)
 }
 
