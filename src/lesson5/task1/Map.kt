@@ -124,19 +124,15 @@ fun buildGrades(grades: Map<String, Int>):
         Map<Int, List<String>> {
     val s =
             mutableMapOf<Int, List<String>>()
-    var t = 0
-    for ((a, b) in grades) {
-        var h = 0
-        val k =
+    val k =
+            mutableSetOf<Int>()
+    for (b in grades.values) k += b
+    for (x in k) {
+        val f =
                 mutableListOf<String>()
-        k += a
-        for ((name, mark) in grades) {
-            if (b == mark)
-                h++
-            if (h >= 2) k += name
-        }
-        t += k.size
-        if (t <= grades.size) s += (b to k)
+        for ((name, mark) in grades)
+            if (mark == x) f += name
+        s += (x to f)
     }
     return s
 }
@@ -168,9 +164,7 @@ fun containsIn(a: Map<String, String>,
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>):
         Map<String, Double> {
     val d =
-            mutableMapOf<String, Double>()
-    for ((f1, f2) in stockPrices)
-        d += (f1 to f2)
+            stockPrices.toMap().toMutableMap()
     for (f1 in d.keys) {
         var sum = 0.0
         var count = 0
@@ -258,27 +252,22 @@ fun propagateHandshakes(friends: Map<String, Set<String>>):
         Map<String, Set<String>> {
     val result =
             mutableMapOf<String, Set<String>>()
-    val f =
+    val f1 =
             mutableSetOf<String>()
     for ((x1, y1) in friends) {
-        f += x1
-        f += y1
+        f1 += x1
+        f1 += y1
     }
-    val p = f.toList()
-    for (x in p) {
-        val r =
-                mutableSetOf<String>()
-        val s =
-                friends[x] ?: setOf()
-        r += s
-        val d = s.toList()
-        for (a in d) {
-            val k =
-                    friends[a] ?: setOf()
-            r += k
+    for (x in f1) {
+        val g =
+                friends[x]?.toMutableSet()
+                        ?: mutableSetOf()
+        for (y in friends.keys) {
+            if (y in g) g += friends[y]?.toMutableSet()
+                    ?: mutableSetOf()
+            g -= x
         }
-        if (x in r) r -= x
-        result += (x to r)
+        result += (x to g)
     }
     return result
 }
@@ -310,15 +299,8 @@ fun subtractOf(a: MutableMap<String, String>,
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val n = mutableListOf<String>()
-    for (x1 in a) {
-        for (x2 in b) {
-            if (x1 == x2) n += x1
-        }
-    }
-    return n
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> =
+        (a intersect b).toList()
 
 /**
  * Средняя
@@ -329,18 +311,19 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    word.toLowerCase()
-    val d = word.toList()
-    var result = 0
-    val f = mutableSetOf<Char>()
-    for (x1 in d)
+fun canBuildFrom(chars: List<Char>,
+                 word: String): Boolean {
+    val f =
+            mutableSetOf<Char>()
+    for (x1 in word.toLowerCase())
         f += x1
     for (x2 in chars) {
         x2.toLowerCase()
-        if (x2 in f) result += 1
+        if (x2 in f)
+            f -= x2
+        if (f.isEmpty()) break
     }
-    return (result == f.size)
+    return (f.isEmpty())
 }
 
 /**
@@ -361,10 +344,8 @@ fun extractRepeats(list: List<String>):
             mutableMapOf<String, Int>()
     for (f1 in list) {
         var count = 0
-        for (h in list) {
-            val s1 = h
-            if (f1 == s1) count += 1
-        }
+        for (h in list)
+            if (f1 == h) count += 1
         if (count >= 2) g += (f1 to count)
     }
     return g
@@ -382,20 +363,20 @@ fun extractRepeats(list: List<String>):
 fun hasAnagrams(words: List<String>): Boolean {
     var g = 0
     var h = 0
-    val s = mutableSetOf<Char>()
     for (x1 in words) {
+        val s =
+                mutableSetOf<Char>()
         for (a1 in x1)
             s += a1
         for (x2 in words) {
-            for (a2 in x2) {
+            for (a2 in x2)
                 if (a2 in s) g += 1
-                if (g == s.size) h += 1
-            }
+            if (g == s.size) h += 1
             g = 0
         }
         s.clear()
     }
-    return (h > words.size)
+    return (h >= (words.size + 2))
 }
 
 /**
@@ -452,41 +433,43 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>,
             mutableSetOf<String>()
     val k =
             mutableListOf<Pair<Int, Int>>()
+    val st =
+            mutableSetOf<Int>()
     for ((weight, cost) in treasures.values) {
-        if (weight <= capacity) k += (weight to cost)
+        if (weight <= capacity)
+            k += (weight to cost)
     }
+    var weight2 = 0
     var costmax = 0
-    for (c2 in 0 until k.size) {
-        val g1 = k[c2].first
-        val g2 = k[c2].second
-        var weight1 = g1
-        if (costmax == 0) costmax = g1
-        for (c3 in (c2 + 1) until k.size) {
-            weight1 += k[c3].first
+    for (c1 in 0 until k.size) {
+        var weight1 = k[c1].first
+        weight2 += k[c1].first
+        if (costmax == 0) costmax = k[c1].second
+        for (c2 in (c1 + 1) until k.size) {
+            weight1 += k[c2].first
             if ((weight1 <= capacity)
-                    && (g2 + k[c3].second >=
+                    && (costmax + k[c2].second >=
                             costmax))
-                costmax += k[c3].second
+                costmax += k[c2].second
+            else weight1 -= k[c2].first
         }
     }
-    var result = (0 to 0)
-    for (c4 in 0 until k.size) {
-        val g2 = k[c4].second
-        var i = g2
-        if (k[c4].first == costmax)
-            result =
-                    (k[c4].first to g2)
-        for (c5 in (c4 + 1) until k.size) {
-            result = (0 to 0)
-            val p = k[c5].second
+    for (c3 in 0 until k.size) {
+        var i = k[c3].second
+        if (weight2 > capacity) st.clear()
+        st += c3
+        for (c4 in (c3 + 1) until k.size) {
+            st += c4
+            val p = k[c4].second
             i += p
-            if (i == costmax) {
-                result = (k[c5].first to p)
-                break
-            }
+            if (i == costmax) break
+            else i -= p
         }
+        if (i == costmax) break
+    }
+    for (key in st) {
         for ((x, y) in treasures)
-            if (y == result) f += x
+            if (y == k[key]) f += x
     }
     return f
 }
