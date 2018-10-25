@@ -226,6 +226,24 @@ class Tests {
                         )
                 )
         )
+        assertEquals(
+                mapOf(
+                        "0" to setOf(),
+                        "1" to setOf("0"),
+                        "2" to setOf("0", "1", "3", "4"),
+                        "3" to setOf("4", "2", "1", "0"),
+                        "4" to setOf("2", "1", "0", "3")
+                ),
+                propagateHandshakes(
+                        mapOf(
+                                "0" to setOf(),
+                                "1" to setOf("0"),
+                                "2" to setOf("1", "3"),
+                                "3" to setOf("4"),
+                                "4" to setOf("2")
+                        )
+                )
+        )
     }
 
     @Test
@@ -325,6 +343,16 @@ class Tests {
                 bagPacking(
                         mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
                         450
+                )
+        )
+        assertEquals(
+                setOf("2", "7"),
+                bagPacking(
+                        mapOf("1" to (1 to 1), "2" to (1 to 250), "3" to (2 to 100),
+                                "12" to (2 to 1), "4" to (3 to 1), "5" to (8 to 1),
+                                "6" to (10 to 1), "7" to (1 to 100), "8" to (1 to 1),
+                                "9" to (1 to 10), "10" to (1 to 15), "11" to (1 to 20)),
+                        2
                 )
         )
     }
