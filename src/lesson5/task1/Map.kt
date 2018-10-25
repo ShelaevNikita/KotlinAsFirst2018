@@ -13,14 +13,11 @@ fun shoppingListCost(
         shoppingList: List<String>,
         costs: Map<String, Double>): Double {
     var totalCost = 0.0
-
     for (item in shoppingList) {
         val itemCost = costs[item]
-        if (itemCost != null) {
+        if (itemCost != null)
             totalCost += itemCost
-        }
     }
-
     return totalCost
 }
 
@@ -34,16 +31,12 @@ fun filterByCountryCode(
         phoneBook: MutableMap<String, String>,
         countryCode: String) {
     val namesToRemove = mutableListOf<String>()
-
     for ((name, phone) in phoneBook) {
-        if (!phone.startsWith(countryCode)) {
+        if (!phone.startsWith(countryCode))
             namesToRemove.add(name)
-        }
     }
-
-    for (name in namesToRemove) {
+    for (name in namesToRemove)
         phoneBook.remove(name)
-    }
 }
 
 /**
@@ -56,12 +49,10 @@ fun removeFillerWords(
         text: List<String>,
         vararg fillerWords: String): List<String> {
     val fillerWordSet = setOf(*fillerWords)
-
     val res = mutableListOf<String>()
     for (word in text) {
-        if (word !in fillerWordSet) {
+        if (word !in fillerWordSet)
             res += word
-        }
     }
     return res
 }
@@ -238,16 +229,16 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, Set<String>>()
-    val f = mutableSetOf<String>()
+    val sum = mutableSetOf<String>()
     for ((x, y) in friends) {
-        f += x
-        f += y
+        sum += x
+        sum += y
     }
-    for (x1 in f) {
+    for (x1 in sum) {
         val g = friends[x1]?.toMutableSet() ?: mutableSetOf()
-        for (c in 0..(friends.size - 2))
+        for (c in 0 until (friends.size - 1))
             for (y1 in friends.keys) {
-                if (y1 in g) g += friends[y1] ?: mutableSetOf()
+                if (y1 in g) g += friends[y1]?.toMutableSet() ?: mutableSetOf()
                 g -= x1
             }
         result += (x1 to g)
@@ -271,9 +262,9 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    val f = a.toMap()
-    for (n in f.keys)
-        if (f[n] == b[n]) a.remove(n)
+    val t = a.toMap()
+    for (n in t.keys)
+        if (t[n] == b[n]) a.remove(n)
 }
 
 /**
@@ -350,8 +341,8 @@ fun hasAnagrams(words: List<String>): Boolean {
             if (g >= s.size) h += 1
             g = 0
         }
-        if (h >= (words.size + 2)) break
         s.clear()
+        if (h >= (words.size + 2)) break
     }
     return (h >= (words.size + 2))
 }
@@ -404,7 +395,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val f = mutableSetOf<String>()
+    val result = mutableSetOf<String>()
     val k = mutableListOf<Pair<Int, Int>>()
     val st = mutableSetOf<Int>()
     for ((weight1, cost1) in treasures.values) {
@@ -414,8 +405,8 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     var costmax = 0
     for (c1 in 0 until k.size) {
         var weight2 = k[c1].first
-        if (costmax == 0) costmax = k[c1].second
         var cost2 = k[c1].second
+        if (costmax == 0) costmax = k[c1].second
         var weight3 = 0
         var cost3 = 0
         if (st.isEmpty()) st += c1
@@ -450,7 +441,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     }
     for (key in st) {
         for ((x, y) in treasures)
-            if (y == k[key]) f += x
+            if (y == k[key]) result += x
     }
-    return f
+    return result
 }
