@@ -338,7 +338,7 @@ fun hasAnagrams(words: List<String>): Boolean {
         for (x2 in words) {
             for (a2 in x2)
                 if (a2 in s) g += 1
-            if (g >= s.size) h += 1
+            if ((g >= s.size) && (x1.length == x2.length)) h += 1
             g = 0
         }
         s.clear()
@@ -396,52 +396,66 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     val result = mutableSetOf<String>()
-    val k = mutableListOf<Pair<Int, Int>>()
+    val k1 = mutableListOf<Pair<Int, Int>>()
+    val k2 = mutableListOf<Pair<Int, Int>>()
     val st = mutableSetOf<Int>()
     for ((weight1, cost1) in treasures.values) {
         if (weight1 <= capacity)
-            k += (weight1 to cost1)
+            k1 += (weight1 to cost1)
+    }
+    while (k1.isNotEmpty()) {
+        var min = k1[0].first
+        for ((first) in k1)
+            min = minOf(first, min)
+        for ((first, second) in k1)
+            if (first == min) {
+                k2 += (min to second)
+                k1 -= (min to second)
+                break
+            }
     }
     var costmax = 0
-    for (c1 in 0 until k.size) {
-        var weight2 = k[c1].first
-        var cost2 = k[c1].second
-        if (costmax == 0) costmax = k[c1].second
+    var weight2 = 0
+    var cost2 = 0
+    for (c1 in 0 until k2.size) {
+        if (weight2 == 0) weight2 = k2[c1].first
+        if (cost2 == 0) cost2 = k2[c1].second
+        if (costmax == 0) costmax = k2[c1].second
         var weight3 = 0
         var cost3 = 0
         if (st.isEmpty()) st += c1
-        for (c2 in (c1 + 1) until k.size) {
-            if ((weight3 < k[c2].first) && (cost3 <= k[c2].second) &&
-                    (weight2 + k[c2].first <= capacity) &&
-                    (k[c1].second + k[c2].second >= costmax)) {
+        for (c2 in (c1 + 1) until k2.size) {
+            if ((weight3 < k2[c2].first) && (cost3 <= k2[c2].second) &&
+                    (weight2 + k2[c2].first <= capacity) &&
+                    (k2[c1].second + k2[c2].second >= costmax)) {
                 st.clear()
                 st += c1
                 st += c2
-                weight2 = k[c1].first + k[c2].first
-                weight3 = k[c2].first
-                cost2 = k[c1].second + k[c2].second
-                cost3 = k[c2].second
-                costmax = k[c1].second + k[c2].second
+                weight2 = k2[c1].first + k2[c2].first
+                weight3 = k2[c2].first
+                cost2 = k2[c1].second + k2[c2].second
+                cost3 = k2[c2].second
+                costmax = k2[c1].second + k2[c2].second
                 continue
             }
-            weight2 += k[c2].first
-            weight3 += k[c2].first
+            weight2 += k2[c2].first
+            weight3 += k2[c2].first
             if ((weight2 <= capacity) &&
-                    (cost2 + k[c2].second > costmax)) {
+                    (cost2 + k2[c2].second > costmax)) {
                 st += c1
                 st += c2
-                cost2 += k[c2].second
-                cost3 += k[c2].second
-                costmax += k[c2].second
+                cost2 += k2[c2].second
+                cost3 += k2[c2].second
+                costmax += k2[c2].second
             } else {
-                weight2 -= k[c2].first
-                weight3 -= k[c2].first
+                weight2 -= k2[c2].first
+                weight3 -= k2[c2].first
             }
         }
     }
     for (key in st) {
         for ((x, y) in treasures)
-            if (y == k[key]) result += x
+            if (y == k2[key]) result += x
     }
     return result
 }
