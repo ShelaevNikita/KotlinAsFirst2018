@@ -332,14 +332,17 @@ fun hasAnagrams(words: List<String>): Boolean {
     val s = mutableListOf<Char>()
     for (x1 in 0 until words.size) {
         s.clear()
-        for (a1 in words[x1])
+        for (a1 in words[x1]) {
+            if (words[x1] == "") s += ' '
             s += a1
-        if (s.isEmpty()) s += ' '
+        }
         for (x2 in (x1 + 1) until words.size) {
             if (words[x1].length == words[x2].length) {
-                for (a2 in words[x2])
+                for (a2 in words[x2]) {
+                    if (words[x1] == "") s -= ' '
                     if (a2 in s)
                         s -= a2
+                }
             }
             if (s.isEmpty()) break
         }
@@ -424,7 +427,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             st += c1
             weight += f
             if ((c1 <= (k2.size - 3)) &&
-                    (capacity - weight < k2[c1 + 1].first))
+                    (capacity - weight < f))
                 if ((k2[c1 + 1].first + k2[c1 + 2].first <= f)
                         && (k2[c1 + 1].second +
                                 k2[c1 + 2].second > k2[c1].second)) {
