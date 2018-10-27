@@ -334,6 +334,7 @@ fun hasAnagrams(words: List<String>): Boolean {
         s.clear()
         for (a1 in words[x1])
             s += a1
+        if (s.isEmpty()) s += ' '
         for (x2 in (x1 + 1) until words.size) {
             if (words[x1].length == words[x2].length) {
                 for (a2 in words[x2])
@@ -422,14 +423,14 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         if ((weight + f <= capacity) || (c1 == 0)) {
             st += c1
             weight += f
-            if ((c1 <= (k2.size - 3)) && (c1 >= (k2.size - 10)))
+            if ((c1 <= (k2.size - 3)) &&
+                    (capacity - weight < k2[c1 + 1].first))
                 if ((k2[c1 + 1].first + k2[c1 + 2].first <= f)
                         && (k2[c1 + 1].second +
                                 k2[c1 + 2].second > k2[c1].second)) {
                     st -= c1
                     st += (c1 + 1)
                     st += (c1 + 2)
-                    weight -= f
                 }
         }
     }
