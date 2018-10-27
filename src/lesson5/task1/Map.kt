@@ -329,22 +329,25 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    var g = 0
-    var h = 0
-    for (x1 in words) {
-        val s = mutableSetOf<Char>()
-        for (a1 in x1)
+    val s = mutableListOf<Char>()
+    for (x1 in 0 until words.size) {
+        for (a1 in words[x1])
             s += a1
-        for (x2 in words) {
-            for (a2 in x2)
-                if (a2 in s) g += 1
-            if ((g >= s.size) && (x1.length == x2.length)) h += 1
-            g = 0
+        val g = s.toList()
+        for (x2 in (x1 + 1) until words.size) {
+            if (words[x1].length == words[x2].length) {
+                for (a2 in words[x2])
+                    if (a2 in s)
+                        s -= a2
+                if (s.isEmpty()) break else {
+                    s.clear()
+                    s += g
+                }
+            }
         }
-        s.clear()
-        if (h >= (words.size + 2)) break
+        if (s.isEmpty()) break
     }
-    return (h >= (words.size + 2))
+    return ((s.isEmpty()) && (words.isNotEmpty()))
 }
 
 /**
@@ -403,59 +406,50 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         if (weight1 <= capacity)
             k1 += (weight1 to cost1)
     }
-    while (k1.isNotEmpty()) {
-        var min = k1[0].first
-        for ((first) in k1)
-            min = minOf(first, min)
-        for ((first, second) in k1)
-            if (first == min) {
-                k2 += (min to second)
-                k1 -= (min to second)
-                break
-            }
-    }
-    var costmax = 0
-    var weight2 = 0
-    var cost2 = 0
-    for (c1 in 0 until k2.size) {
-        if (weight2 == 0) weight2 = k2[c1].first
-        if (cost2 == 0) cost2 = k2[c1].second
-        if (costmax == 0) costmax = k2[c1].second
-        var weight3 = 0
-        var cost3 = 0
-        if (st.isEmpty()) st += c1
-        for (c2 in (c1 + 1) until k2.size) {
-            if ((weight3 < k2[c2].first) && (cost3 <= k2[c2].second) &&
-                    (weight2 + k2[c2].first <= capacity) &&
-                    (k2[c1].second + k2[c2].second >= costmax)) {
-                st.clear()
-                st += c1
-                st += c2
-                weight2 = k2[c1].first + k2[c2].first
-                weight3 = k2[c2].first
-                cost2 = k2[c1].second + k2[c2].second
-                cost3 = k2[c2].second
-                costmax = k2[c1].second + k2[c2].second
-                continue
-            }
-            weight2 += k2[c2].first
-            weight3 += k2[c2].first
-            if ((weight2 <= capacity) &&
-                    (cost2 + k2[c2].second > costmax)) {
-                st += c1
-                st += c2
-                cost2 += k2[c2].second
-                cost3 += k2[c2].second
-                costmax += k2[c2].second
-            } else {
-                weight2 -= k2[c2].first
-                weight3 -= k2[c2].first
-            }
+    k2 += k1
+    var g = 0
+    val size = k1.size
+    var weight = 0
+    var max = 1
+    if (size != 0) for (c1 in 0 until size) {
+        if (c1 == 0) {
+            var min = k1[0].first
+            var maxmin = k1[0].first
+            for ((first) in k1)
+                min = minOf(first, min)
+            for ((first, second) in k1)
+                if (first == min) maxmin = maxOf(second, maxmin)
+            for (c2 in 0 until size)
+                if ((k1[c2].first == min) &&
+                        (k1[c2].second == maxmin)) {
+                    g = c2
+                    st += c2
+                    k2 -= (min to maxmin)
+                    break
+                }
         }
+        if (weight == 0) weight = k1[g].first
+        if (max != 0) max = k1[g].second
+        var f = 0
+        for (x1 in k2)
+            max = maxOf(x1.second, max)
+        for ((first, second) in k2)
+            if (second == max) f = first
+        if (weight + f <= capacity) {
+            for (c in 0 until k1.size)
+                if ((k1[c].first == f) && (k1[c].second == max)) {
+                    st += c
+                    break
+                }
+            weight += f
+        }
+        k2 -= (f to max)
+        max = 0
     }
     for (key in st) {
         for ((x, y) in treasures)
-            if (y == k2[key]) result += x
+            if (y == k1[key]) result += x
+
     }
     return result
 }
