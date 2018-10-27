@@ -331,19 +331,16 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 fun hasAnagrams(words: List<String>): Boolean {
     val s = mutableListOf<Char>()
     for (x1 in 0 until words.size) {
+        s.clear()
         for (a1 in words[x1])
             s += a1
-        val g = s.toList()
         for (x2 in (x1 + 1) until words.size) {
             if (words[x1].length == words[x2].length) {
                 for (a2 in words[x2])
                     if (a2 in s)
                         s -= a2
-                if (s.isEmpty()) break else {
-                    s.clear()
-                    s += g
-                }
             }
+            if (s.isEmpty()) break
         }
         if (s.isEmpty()) break
     }
@@ -406,50 +403,40 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         if (weight1 <= capacity)
             k1 += (weight1 to cost1)
     }
-    k2 += k1
-    var g = 0
-    val size = k1.size
     var weight = 0
-    var max = 1
-    if (size != 0) for (c1 in 0 until size) {
-        if (c1 == 0) {
-            var min = k1[0].first
-            var maxmin = k1[0].first
-            for ((first) in k1)
-                min = minOf(first, min)
-            for ((first, second) in k1)
-                if (first == min) maxmin = maxOf(second, maxmin)
-            for (c2 in 0 until size)
-                if ((k1[c2].first == min) &&
-                        (k1[c2].second == maxmin)) {
-                    g = c2
-                    st += c2
-                    k2 -= (min to maxmin)
-                    break
-                }
-        }
-        if (weight == 0) weight = k1[g].first
-        if (max != 0) max = k1[g].second
-        var f = 0
-        for (x1 in k2)
+    var max: Int
+    var f = 0
+    while (k1.isNotEmpty()) {
+        max = k1[0].second
+        for (x1 in k1)
             max = maxOf(x1.second, max)
-        for ((first, second) in k2)
-            if (second == max) f = first
-        if (weight + f <= capacity) {
-            for (c in 0 until k1.size)
-                if ((k1[c].first == f) && (k1[c].second == max)) {
-                    st += c
-                    break
-                }
+        for ((first, second) in k1)
+            if (second == max)
+                f = first
+        k2 += (f to max)
+        k1 -= (f to max)
+    }
+    if (k2.size != 0) for (c1 in 0 until k2.size) {
+        f = k2[c1].first
+        if (c1 == 0) weight = 0
+        if ((weight + f <= capacity) || (c1 == 0)) {
+            st += c1
             weight += f
+            if ((c1 <= (k2.size - 3)) && (c1 >= (k2.size - 10)))
+                if ((k2[c1 + 1].first + k2[c1 + 2].first <= f)
+                        && (k2[c1 + 1].second +
+                                k2[c1 + 2].second > k2[c1].second)) {
+                    st -= c1
+                    st += (c1 + 1)
+                    st += (c1 + 2)
+                    weight -= f
+                }
         }
-        k2 -= (f to max)
-        max = 0
     }
     for (key in st) {
         for ((x, y) in treasures)
-            if (y == k1[key]) result += x
-
+            if (y == k2[key]) result += x
     }
     return result
 }
+
