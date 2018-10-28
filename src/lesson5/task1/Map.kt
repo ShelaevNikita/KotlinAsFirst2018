@@ -411,8 +411,10 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         for (x1 in k1)
             max = maxOf(x1.second, max)
         for ((first, second) in k1)
-            if (second == max)
+            if (second == max) {
                 f = first
+                break
+            }
         k2 += (f to max)
         k1 -= (f to max)
     }
@@ -420,7 +422,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     if (k2.size != 0) for (c1 in 0 until k2.size) {
         f = k2[c1].first
         if (weight + f <= capacity)
-            if (((c1 <= (k2.size - 3)) && (capacity - weight < f))
+            if (((c1 <= (k2.size - 3)) && (capacity - weight < 3 * f))
                     && (k2[c1 + 1].first + k2[c1 + 2].first <= f)
                     && (k2[c1 + 1].second + k2[c1 + 2].second > k2[c1].second))
                 Double.NaN else {
