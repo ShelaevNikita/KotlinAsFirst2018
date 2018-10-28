@@ -404,36 +404,34 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         if (weight1 <= capacity)
             k1 += (weight1 to cost1)
     }
-    var max: Int
-    var f = 0
     while (k1.isNotEmpty()) {
-        max = k1[0].second
+        var max = 0
+        var min = Int.MAX_VALUE
         for (x1 in k1)
             max = maxOf(x1.second, max)
         for ((first, second) in k1)
-            if (second == max) {
-                f = first
-                break
-            }
-        k2 += (f to max)
-        k1 -= (f to max)
+            if (second == max)
+                min = minOf(first, min)
+        k2 += (min to max)
+        k1 -= (min to max)
     }
     var weight = 0
     if (k2.size != 0) for (c1 in 0 until k2.size) {
-        f = k2[c1].first
-        if (weight + f <= capacity)
-            if (((c1 <= (k2.size - 3)) && (capacity - weight < 3 * f))
+        val f = k2[c1].first
+        if (weight + f <= capacity) {
+            weight += f
+            if (((c1 <= (k2.size - 3)) && (capacity - weight < 2 * f))
                     && (k2[c1 + 1].first + k2[c1 + 2].first <= f)
                     && (k2[c1 + 1].second + k2[c1 + 2].second > k2[c1].second))
-                Double.NaN else {
+                weight -= f else {
                 for ((x, y) in treasures)
                     if (y == k2[c1]) {
                         if (x in result) continue
                         result += x
                         break
                     }
-                weight += f
             }
+        }
     }
     return result
 }
