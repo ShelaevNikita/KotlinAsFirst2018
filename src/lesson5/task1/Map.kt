@@ -332,17 +332,15 @@ fun hasAnagrams(words: List<String>): Boolean {
     val s = mutableListOf<Char>()
     for (x1 in 0 until words.size) {
         s.clear()
-        for (a1 in words[x1]) {
-            if (words[x1] == "") s += ' '
+        if (words[x1].isEmpty()) s += ' '
+        for (a1 in words[x1])
             s += a1
-        }
         for (x2 in (x1 + 1) until words.size) {
             if (words[x1].length == words[x2].length) {
-                for (a2 in words[x2]) {
-                    if (words[x1] == "") s -= ' '
+                if (words[x2].isEmpty()) s -= ' '
+                for (a2 in words[x2])
                     if (a2 in s)
                         s -= a2
-                }
             }
             if (s.isEmpty()) break
         }
@@ -402,12 +400,10 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     val result = mutableSetOf<String>()
     val k1 = mutableListOf<Pair<Int, Int>>()
     val k2 = mutableListOf<Pair<Int, Int>>()
-    val st = mutableSetOf<Int>()
     for ((weight1, cost1) in treasures.values) {
         if (weight1 <= capacity)
             k1 += (weight1 to cost1)
     }
-    var weight = 0
     var max: Int
     var f = 0
     while (k1.isNotEmpty()) {
@@ -420,26 +416,22 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         k2 += (f to max)
         k1 -= (f to max)
     }
+    var weight = 0
     if (k2.size != 0) for (c1 in 0 until k2.size) {
         f = k2[c1].first
-        if (c1 == 0) weight = 0
-        if ((weight + f <= capacity) || (c1 == 0)) {
-            st += c1
-            weight += f
-            if ((c1 <= (k2.size - 3)) &&
-                    (capacity - weight < f))
-                if ((k2[c1 + 1].first + k2[c1 + 2].first <= f)
-                        && (k2[c1 + 1].second +
-                                k2[c1 + 2].second > k2[c1].second)) {
-                    st -= c1
-                    st += (c1 + 1)
-                    st += (c1 + 2)
-                }
-        }
-    }
-    for (key in st) {
-        for ((x, y) in treasures)
-            if (y == k2[key]) result += x
+        if (weight + f <= capacity)
+            if (((c1 <= (k2.size - 3)) && (capacity - weight < f))
+                    && (k2[c1 + 1].first + k2[c1 + 2].first <= f)
+                    && (k2[c1 + 1].second + k2[c1 + 2].second > k2[c1].second))
+                Double.NaN else {
+                for ((x, y) in treasures)
+                    if (y == k2[c1]) {
+                        if (x in result) continue
+                        result += x
+                        break
+                    }
+                weight += f
+            }
     }
     return result
 }
