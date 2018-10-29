@@ -428,7 +428,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
                         g++
                 }
             }
-            if (((g != 0) && (c1 == 1)) || ((k2.size > 2) &&
+            if ((c1 == 1) || ((c1 < (k2.size - 1)) &&
                             (k2[c1 + 1].first == 2))) g = 0
             if (g == 0) {
                 weight += first
