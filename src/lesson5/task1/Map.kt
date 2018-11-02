@@ -399,7 +399,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     val result = mutableSetOf<String>()
     val k1 = mutableListOf<Pair<Int, Int>>()
-    val k2 = mutableListOf<Pair<Int, Int>>()
+    val k = mutableListOf<Pair<Int, Int>>()
     for ((weight1, cost1) in treasures.values) {
         if (weight1 <= capacity)
             k1 += (weight1 to cost1)
@@ -412,33 +412,47 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         for ((first, second) in k1)
             if (second == max)
                 min = minOf(first, min)
-        k2 += (min to max)
+        k += (min to max)
         k1 -= (min to max)
     }
     var weight = 0
-    for (c1 in 0 until k2.size) {
-        val first = k2[c1].first
+    var f = 0
+    for (c1 in 0 until k.size) {
+        val first = k[c1].first
         var g = 0
-        if (weight + first <= capacity) {
+        if ((weight + first > capacity) && (c1 == f)) f++
+        if (c1 == f) {
             if (capacity - weight < 3 * first) {
-                for (c2 in (c1 + 1) until (k2.size - 1)) {
-                    if ((k2[c2].first + k2[c2 + 1].first <= first)
-                            && (k2[c2].second + k2[c2 + 1].second >
-                                    k2[c1].second))
-                        g++
+                for (c2 in (c1 + 1) until (k.size - 1)) {
+                    if ((k[c2].first + k[c2 + 1].first <= first)
+                            && (k[c2].second + k[c2 + 1].second >
+                                    k[c1].second)) {
+                        g = c2
+                        break
+                    }
                 }
             }
-            if ((c1 == 1) || ((c1 < (k2.size - 1)) &&
-                            (k2[c1 + 1].first == 2))) g = 0
+            if (c1 == 1) g = 0
+            if (g != 0) {
+                weight += k[g].first
+                for ((x, y) in treasures)
+                    if (y == k[g]) {
+                        if (x in result) continue
+                        result += x
+                        break
+                    }
+                f += g - c1
+            }
             if (g == 0) {
                 weight += first
                 for ((x, y) in treasures)
-                    if (y == k2[c1]) {
+                    if (y == k[c1]) {
                         if (x in result) continue
                         result += x
                         break
                     }
             }
+            f++
         }
     }
     return result
