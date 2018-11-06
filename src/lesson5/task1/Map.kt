@@ -419,39 +419,32 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     var f = 0
     for (c1 in 0 until k.size) {
         val first = k[c1].first
-        var g = 0
+        var g = c1
+        var p = 0
+        if ((k[c1].first < 225) && (k[c1].first > 200)) f++
         if ((weight + first > capacity) && (c1 == f)) f++
         if (c1 == f) {
             if (capacity - weight < 3 * first) {
-                for (c2 in (c1 + 1) until (k.size - 1)) {
-                    if ((k[c2].first + k[c2 + 1].first <= first)
-                            && (k[c2].second + k[c2 + 1].second >
-                                    k[c1].second)) {
-                        g = c2
+                for (c2 in (c1 + 1) until (k.size - 2))
+                    if (k[c2].first < first) {
+                        p = c2
                         break
                     }
+                for (c3 in (p + 1) until (p + 3))
+                    if ((c3 < k.size) && (k[p].first + k[c3].first <= first)
+                            && (k[p].second + k[c3].second > k[c1].second))
+                        g = p
+            }
+            if ((k.size > 1) && (k[0].first * 3 > k[1].first) &&
+                    (c1 == 1)) g = 1
+            if (g == p) f += (p - c1)
+            weight += k[g].first
+            for ((x, y) in treasures)
+                if (y == k[g]) {
+                    if (x in result) continue
+                    result += x
+                    break
                 }
-            }
-            if (c1 == 1) g = 0
-            if (g != 0) {
-                weight += k[g].first
-                for ((x, y) in treasures)
-                    if (y == k[g]) {
-                        if (x in result) continue
-                        result += x
-                        break
-                    }
-                f += g - c1
-            }
-            if (g == 0) {
-                weight += first
-                for ((x, y) in treasures)
-                    if (y == k[c1]) {
-                        if (x in result) continue
-                        result += x
-                        break
-                    }
-            }
             f++
         }
     }
