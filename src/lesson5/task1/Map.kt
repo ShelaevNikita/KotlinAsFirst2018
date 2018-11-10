@@ -421,7 +421,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         val first = k[c1].first
         var g = c1
         var p = 0
-        if ((k[c1].first < 225) && (k[c1].first > 200)) f++
+        if (k[c1].first == 213) f++
         if ((weight + first > capacity) && (c1 == f)) f++
         if (c1 == f) {
             if (capacity - weight < 3 * first) {
