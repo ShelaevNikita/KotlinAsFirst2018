@@ -149,15 +149,12 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     for (f1 in d.keys) {
         var sum = 0.0
         var count = 0
-        for ((s1, s2) in stockPrices) {
-            if (s1 == f1) {
-                sum += s2
-                count++
-            }
-        }
-        if (count > 1) {
-            d[f1] = sum / count
-        }
+        for ((s1) in stockPrices)
+            if (s1 == f1) count++
+        for ((s1, s2) in stockPrices)
+            if (s1 == f1) sum += (s2 / count)
+        for ((s1) in stockPrices)
+            if (s1 == f1) d[f1] = sum
     }
     return d
 }
@@ -396,57 +393,4 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val result = mutableSetOf<String>()
-    val k1 = mutableListOf<Pair<Int, Int>>()
-    val k = mutableListOf<Pair<Int, Int>>()
-    for ((weight1, cost1) in treasures.values) {
-        if (weight1 <= capacity)
-            k1 += (weight1 to cost1)
-    }
-    while (k1.isNotEmpty()) {
-        var max = 0
-        var min = Int.MAX_VALUE
-        for (x1 in k1)
-            max = maxOf(x1.second, max)
-        for ((first, second) in k1)
-            if (second == max)
-                min = minOf(first, min)
-        k += (min to max)
-        k1 -= (min to max)
-    }
-    var weight = 0
-    var f = 0
-    for (c1 in 0 until k.size) {
-        val first = k[c1].first
-        var g = c1
-        var p = 0
-        if (k[c1].first == 213) f++
-        if ((weight + first > capacity) && (c1 == f)) f++
-        if (c1 == f) {
-            if (capacity - weight < 3 * first) {
-                for (c2 in (c1 + 1) until (k.size - 2))
-                    if (k[c2].first < first) {
-                        p = c2
-                        break
-                    }
-                for (c3 in (p + 1) until (p + 3))
-                    if ((c3 < k.size) && (k[p].first + k[c3].first <= first)
-                            && (k[p].second + k[c3].second > k[c1].second))
-                        g = p
-            }
-            if ((k.size > 1) && (k[0].first * 3 > k[1].first) &&
-                    (c1 == 1)) g = 1
-            if (g == p) f += (p - c1)
-            weight += k[g].first
-            for ((x, y) in treasures)
-                if (y == k[g]) {
-                    if (x in result) continue
-                    result += x
-                    break
-                }
-            f++
-        }
-    }
-    return result
-}
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()

@@ -133,7 +133,7 @@ fun dateDigitToStr(digital: String): String {
         val days = if (r.isNotEmpty()) daysInMonth(f[1].toInt(),
                 f[2].toInt()) else 0
         return (if ((r.isNotEmpty()) && (f[0].toInt() <= days))
-            String.format("%d %s %02d", f[0].toInt(), r, f[2].toInt())
+            String.format("%d %s %d", f[0].toInt(), r, f[2].toInt())
         else result.toString())
     } catch (e: NumberFormatException) {
         return result.toString()
@@ -190,8 +190,8 @@ fun bestLongJump(jumps: String): Int {
     val f = jumps.split(' ')
     var max = 0
     return try {
-        for (x in f) if ((x != "-") && (x != "%"))
-            d += x.toInt()
+        for (x in f)
+            if ((x != "-") && (x != "%") && (x.isNotEmpty())) d += x.toInt()
         for (x in d) max = maxOf(x, max)
         (if (max > 0) max else -1)
     } catch (e: NumberFormatException) {
@@ -214,7 +214,8 @@ fun bestHighJump(jumps: String): Int {
     val f = jumps.split(' ')
     return try {
         for (x in 0 until (f.size - 1))
-            if (f[x + 1] == "+") max = maxOf(max, f[x].toInt())
+            if ((f[x + 1] == "+") || (f[x + 1] == "%+") || (f[x + 1] == "%%+"))
+                max = maxOf(max, f[x].toInt())
         (if (max != 0) max else -1)
     } catch (e: NumberFormatException) {
         -1
@@ -234,9 +235,11 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val f = expression.split(' ')
     for (x in 0 until f.size step 2)
-        for (y in f[x])
-            if ((y.toInt() >= 48) && (y.toInt() <= 58)) continue else
-                throw IllegalArgumentException()
+        if (f[x].isNotEmpty()) {
+            for (y in f[x])
+                if ((y.toInt() >= 48) && (y.toInt() <= 58)) continue else
+                    throw IllegalArgumentException()
+        } else throw IllegalArgumentException()
     var result = f[0].toInt()
     for (x in 1 until (f.size - 1) step 2) {
         when {
@@ -321,6 +324,10 @@ fun fromRoman(roman: String): Int {
     var result = 0
     var k = ' '
     var f = 0
+    if (roman.isEmpty()) {
+        result = -1
+        return result
+    }
     for (x in 0 until roman.length) {
         val d = roman[x]
         if (x <= (roman.length - 2)) k = roman[x + 1]
@@ -403,81 +410,5 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val list = mutableListOf<Int>()
-    var n = cells / 2
-    var hop = 0
-    for (x in 0 until cells) list += 0
-    var s1 = 0
-    val str1 = StringBuilder()
-    val str2 = StringBuilder()
-    for (x in commands) {
-        if (x == '[') s1++
-        if (x == ']') s1--
-    }
-    if (s1 != 0) throw IllegalArgumentException()
-    for (x in 0 until commands.length) if (hop < limit) {
-        if ((n >= 0) && (n <= cells - 1)) {
-            if (x == s1) {
-                when (commands[x]) {
-                    '<' -> n--
-                    '>' -> n++
-                    '+' -> list[n]++
-                    '-' -> list[n]--
-                    ' ' -> Double.NaN
-                    '[' -> {
-                        var s2 = 1
-                        for (char1 in (x + 1) until commands.length) {
-                            if (commands[char1] == '[') s2++
-                            if (commands[char1] == ']') s2--
-                            if (s2 == 0) break else str1.append(commands[char1])
-                        }
-                        s1 += str1.length + 1
-                        while ((list[n] != 0) && (hop < limit - 1)) {
-                            s2 = 0
-                            hop++
-                            for (char in 0 until str1.length) {
-                                if (char == s2) {
-                                    when (str1[char]) {
-                                        '<' -> n--
-                                        '>' -> n++
-                                        '+' -> list[n]++
-                                        '-' -> list[n]--
-                                        '[' -> {
-                                            for (char2 in (char + 1) until str1.length)
-                                                if (str1[char2] == ']') break else str2.append(str1[char2])
-                                            s2 += str2.length + 1
-                                            while ((list[n] != 0) && (hop < limit - 1)) {
-                                                hop++
-                                                for (char3 in str2.toString()) {
-                                                    when (char3) {
-                                                        '<' -> n--
-                                                        '>' -> n++
-                                                        '+' -> list[n]++
-                                                        '-' -> list[n]--
-                                                        else -> Double.NaN
-                                                    }
-                                                    if (hop == limit - 1) break
-                                                    hop++
-                                                }
-                                            }
-                                        }
-                                        else -> Double.NaN
-                                    }
-                                    str2.delete(0, str2.length)
-                                    s2++
-                                    if (hop == limit - 1) break
-                                    hop++
-                                }
-                            }
-                        }
-                    }
-                    else -> throw IllegalArgumentException()
-                }
-                str1.delete(0, str1.length)
-                s1++
-                hop++
-            }
-        } else throw IllegalStateException()
-    } else break
-    return list
+    TODO()
 }
