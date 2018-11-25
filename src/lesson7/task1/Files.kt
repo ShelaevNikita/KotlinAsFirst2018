@@ -124,14 +124,12 @@ fun centerFile(inputName: String, outputName: String) {
     val result = File(outputName).bufferedWriter()
     val d = StringBuilder()
     for (x in 0 until file.size) {
-        for (char in 0 until file[x].length) {
-            if ((file[x])[char] == ' ') {
-                if (char == 0) continue
-                if ((char <= file[x].length - 1) && ((file[x])[char + 1] == ' ')) continue
-                if ((char >= 1) && ((file[x])[char - 1] == ' ')) continue
-            }
-            d.append((file[x])[char])
-        }
+        var s1 = 0
+        var s2 = 0
+        for (char in file[x]) if (char == ' ') s1++ else break
+        for (char in (file[x].length - 1) downTo 0) if ((file[x])[char] == ' ')
+            s2++ else break
+        for (char in s1 until (file[x].length - s2)) d.append((file[x])[char])
         file[x] = d.toString()
         d.delete(0, d.length)
     }
@@ -263,7 +261,8 @@ fun top20Words(inputName: String): Map<String, Int> {
                     (char == '9') || (char == '0') || (char == '-') || (char == '!') ||
                     (char == '?') || (char == ',') || (char == '.') || (char == ':') ||
                     (char == ';') || (char == '—') || (char == '(') || (char == ')') ||
-                    (char == '«') || (char == '»') || (char == '*')) f.append(' ')
+                    (char == '«') || (char == '»') || (char == '*') || (char == '/'))
+                f.append(' ')
             else f.append(char.toLowerCase())
         }
     }
@@ -334,7 +333,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
         var g = 0
         for ((char, string) in dictionary)
             if (file[ch].toLowerCase() == char.toLowerCase()) {
-                if (file[ch] != char.toLowerCase()) {
+                if ((file[ch] != char.toLowerCase()) && (string.isNotEmpty())) {
                     f.append(string[0].toUpperCase())
                     for (p in 1 until string.length)
                         f.append(string[p].toLowerCase())
@@ -459,12 +458,16 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var s3 = 0
     var count = 0
     for (x in file) {
+        var find1 = Regex("~~").findAll(x, 0).count()
+        var find2 = Regex("\\*\\*").findAll(x, 0).count()
+        var find3 = Regex("\\*").findAll(x, 0).count()
         if (x.isNotEmpty()) {
             for (char in 0 until x.length) {
                 if (count > char) continue else {
-                    if ((x[char] == '~') && (s3 == 0) &&
+                    if ((find1 % 2 == 0) && (x[char] == '~') && (s3 == 0) &&
                             (char < x.length - 1) && (x[char + 1] == '~')) {
                         s3 = 1
+                        find1--
                         string.append("<s>")
                         count += 2
                         continue
@@ -472,13 +475,15 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     if ((x[char] == '~') && (s3 == 1) &&
                             (char < x.length - 1) && (x[char + 1] == '~')) {
                         s3 = 0
+                        find1--
                         string.append("</s>")
                         count += 2
                         continue
                     }
-                    if ((x[char] == '*') && (s2 == 0) &&
+                    if ((find2 % 2 == 0) && (x[char] == '*') && (s2 == 0) &&
                             (char < x.length - 1) && (x[char + 1] == '*')) {
                         s2 = 1
+                        find2--
                         string.append("<b>")
                         count += 2
                         continue
@@ -486,18 +491,21 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     if ((x[char] == '*') && (s2 == 1) &&
                             (char < x.length - 1) && (x[char + 1] == '*')) {
                         s2 = 0
+                        find2--
                         string.append("</b>")
                         count += 2
                         continue
                     }
-                    if ((x[char] == '*') && (s1 == 0)) {
+                    if ((find3 % 2 == 0) && (x[char] == '*') && (s1 == 0)) {
                         s1 = 1
+                        find3--
                         count++
                         string.append("<i>")
                         continue
                     }
                     if ((x[char] == '*') && (s1 == 1)) {
                         s1 = 0
+                        find3--
                         count++
                         string.append("</i>")
                         continue
@@ -812,24 +820,27 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                 string.append(' ')
             string.append('-').append(pz)
         }
+        var max: Int
+        if (x != 0) max = maxOf(digitNumber(pz) + 1, digitNumber(s1))
+        else max = digitNumber(pz) + 1
         result.write(string.toString())
         result.newLine()
         string.delete(0, string.length)
-        if (x != 0) for (y in 0 until (length - digitNumber(pz)))
+        if (x != 0) for (y in 0 until (length + 1 - max))
             string.append(' ')
-        for (y in 0..digitNumber(pz)) string.append('-')
+        for (y in 0 until max) string.append('-')
         result.write(string.toString())
         result.newLine()
         string.delete(0, string.length)
         if (length != digitlhv) {
             s2 = (lhv / (pow(10.0,
                     (digitlhv - length - 1).toDouble()).toInt())) % 10
-            for (y in 0 until (length + 1 - digitNumber(s1)))
+            for (y in 0 until length + 1 - digitNumber(s1))
                 string.append(' ')
             if (s1 == 0) string.append(0)
             string.append(s1 * 10 + s2)
         } else {
-            for (y in 0 until length) string.append(' ')
+            for (y in 0 until length + 1 - digitNumber(s1)) string.append(' ')
             string.append(s1)
         }
         result.write(string.toString())
