@@ -108,17 +108,14 @@ data class Segment(val begin: Point, val end: Point) {
 fun diameter(vararg points: Point): Segment {
     if (points.size < 2) throw IllegalArgumentException()
     var max = 0.0
+    var s = 0.0
     var segment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
     for (a in 0 until points.size) {
-        for (b in (a + 1) until points.size)
+        for (b in (a + 1) until points.size) {
             max = maxOf(points[a].distance(points[b]), max)
-    }
-    for (a in 0 until points.size) {
-        for (b in (a + 1) until points.size)
-            if (points[a].distance(points[b]) == max) {
-                segment = Segment(points[a], points[b])
-                break
-            }
+            if (s != max) segment = Segment(points[a], points[b])
+            s = max
+        }
     }
     return segment
 }
@@ -131,10 +128,9 @@ fun diameter(vararg points: Point): Segment {
  */
 fun circleByDiameter(diameter: Segment): Circle {
     val radius = diameter.begin.distance(diameter.end) / 2
-    val center1 = abs(diameter.begin.x + diameter.end.x) / 2
-    val center2 = abs(diameter.begin.y + diameter.end.y) / 2
-    val circle = Circle(Point(center1, center2), radius)
-    return circle
+    val center1 = (diameter.begin.x + diameter.end.x) / 2
+    val center2 = (diameter.begin.y + diameter.end.y) / 2
+    return Circle(Point(center1, center2), radius)
 }
 
 /**
@@ -175,10 +171,14 @@ class Line private constructor(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val f = Point(maxOf(s.begin.x, s.end.x), s.begin.y)
-    val angle = if (s.begin.y > s.end.y)
-        (PI - acos((s.begin.distance(f) / s.begin.distance(s.end))))
-    else acos((s.begin.distance(f) / s.begin.distance(s.end)))
+    val angle: Double
+    angle = if (s.begin.y > s.end.y) {
+        val f = Point(s.begin.x, s.end.y)
+        PI - acos(s.begin.distance(f) / s.begin.distance(s.end))
+    } else {
+        val f = Point(s.end.x, s.begin.y)
+        acos(s.begin.distance(f) / s.begin.distance(s.end))
+    }
     return Line(s.begin, angle)
 }
 
@@ -196,7 +196,7 @@ fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
-    val point = Point ((abs(a.x + b.x) / 2), (abs(a.y + b.y) / 2))
+    val point = Point(((a.x + b.x) / 2), ((a.y + b.y) / 2))
     val f = Point(maxOf(a.x, b.x), a.y)
     val angle1 = if (a.y > b.y)
         (PI - acos((a.distance(f) / a.distance(b))))
@@ -211,7 +211,22 @@ fun bisectorByPoints(a: Point, b: Point): Line {
  * Задан список из n окружностей на плоскости. Найти пару наименее удалённых из них.
  * Если в списке менее двух окружностей, бросить IllegalArgumentException
  */
-fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
+fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
+    if (circles.size < 2) throw IllegalArgumentException()
+    var min = Int.MAX_VALUE.toDouble()
+    var s = min
+    val d = Point(0.0, 0.0)
+    val pointd = Circle(d, 0.0)
+    var pair = Pair(pointd, pointd)
+    for (a in 0 until circles.size) {
+        for (b in (a + 1) until circles.size) {
+            min = minOf(circles[a].distance(circles[b]), min)
+            if (s != min) pair = Pair(circles[a], circles[b])
+            s = min
+        }
+    }
+    return pair
+}
 
 /**
  * Сложная

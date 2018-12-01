@@ -73,7 +73,6 @@ fun main(args: Array<String>) {
  */
 fun dateStrToDigit(str: String): String {
     val f = str.split(' ')
-    val result = StringBuilder()
     try {
         val r = if (f.size == 3) when (f[1]) {
             "января" -> 1
@@ -90,13 +89,12 @@ fun dateStrToDigit(str: String): String {
             "декабря" -> 12
             else -> -1
         } else -1
-        val days = if (r != -1) daysInMonth(r, f[2].toInt()) else 0
-        return (if ((r != -1) && (f[0].toInt() <= days))
-            String.format("%02d.%02d.%d",
-                    f[0].toInt(), r, f[2].toInt())
-        else result.toString())
+        if (r != -1) return ""
+        val days = daysInMonth(r, f[2].toInt())
+        return if (f[0].toInt() <= days) String.format("%02d.%02d.%d",
+                f[0].toInt(), r, f[2].toInt()) else ""
     } catch (e: NumberFormatException) {
-        return result.toString()
+        return ""
     }
 }
 
@@ -112,31 +110,29 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val f = digital.split('.')
-    val result = StringBuilder()
-    val r = StringBuilder()
+    val r: String
     try {
-        if (f.size == 3) when (f[1].toInt()) {
-            1 -> r.append("января")
-            2 -> r.append("февраля")
-            3 -> r.append("марта")
-            4 -> r.append("апреля")
-            5 -> r.append("мая")
-            6 -> r.append("июня")
-            7 -> r.append("июля")
-            8 -> r.append("августа")
-            9 -> r.append("сентября")
-            10 -> r.append("октября")
-            11 -> r.append("ноября")
-            12 -> r.append("декабря")
-            else -> r.append("")
-        } else r.append("")
-        val days = if (r.isNotEmpty()) daysInMonth(f[1].toInt(),
-                f[2].toInt()) else 0
-        return (if ((r.isNotEmpty()) && (f[0].toInt() <= days))
-            String.format("%d %s %d", f[0].toInt(), r, f[2].toInt())
-        else result.toString())
+        r = if (f.size == 3) when (f[1].toInt()) {
+            1 -> "января"
+            2 -> "февраля"
+            3 -> "марта"
+            4 -> "апреля"
+            5 -> "мая"
+            6 -> "июня"
+            7 -> "июля"
+            8 -> "августа"
+            9 -> "сентября"
+            10 -> "октября"
+            11 -> "ноября"
+            12 -> "декабря"
+            else -> ""
+        } else ""
+        if (r.isNotEmpty()) return ""
+        val days = daysInMonth(f[1].toInt(), f[2].toInt())
+        return if (f[0].toInt() <= days)
+            String.format("%d %s %d", f[0].toInt(), r, f[2].toInt()) else ""
     } catch (e: NumberFormatException) {
-        return result.toString()
+        return ""
     }
 }
 
@@ -153,26 +149,17 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val f = phone.split(' ')
-    val result1 = StringBuilder()
-    val result2 = StringBuilder()
-    var d = 0
-    for (x in 0 until f.size) {
-        for (a in 0 until f[x].length) {
-            if (((f[x])[a] != '(') && ((f[x])[a] != ')') &&
-                    ((f[x])[a] != '-') && ((f[x])[a] != '+'))
-                result1.append((f[x])[a])
-            if ((a == 0) && (x == 0) && ((f[x])[a] == '+')) d++
-        }
-    }
+    val d = phone[0]
+    val f = phone.replace(Regex("""[-+ ()]"""), "")
+    val result = StringBuilder()
     try {
-        result1.toString().toDouble()
-        if (d == 1) result2.append('+')
-        result2.append(result1)
+        f.toDouble()
+        if (d == '+') result.append('+')
+        result.append(f)
     } catch (e: NumberFormatException) {
-        result2.delete(0, result2.length)
+        return ""
     }
-    return result2.toString()
+    return result.toString()
 }
 
 /**
@@ -186,14 +173,13 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val d = mutableListOf<Int>()
     val f = jumps.split(' ')
     var max = -1
     return try {
         for (x in f)
-            if ((x != "-") && (x != "%") && (x.isNotEmpty())) d += x.toInt()
-        for (x in d) max = maxOf(x, max)
-        (if (d.isNotEmpty()) max else -1)
+            if ((x != "-") && (x != "%") && (x.isNotEmpty()))
+                max = maxOf(x.toInt(), max)
+        max
     } catch (e: NumberFormatException) {
         -1
     }
@@ -216,7 +202,7 @@ fun bestHighJump(jumps: String): Int {
         for (x in 0 until (f.size - 1))
             if ((f[x + 1] == "+") || (f[x + 1] == "%+") || (f[x + 1] == "%%+"))
                 max = maxOf(max, f[x].toInt())
-        (if (max != -1) max else -1)
+        max
     } catch (e: NumberFormatException) {
         -1
     }
@@ -237,14 +223,14 @@ fun plusMinus(expression: String): Int {
     for (x in 0 until f.size step 2)
         if (f[x].isNotEmpty()) {
             for (y in f[x])
-                if ((y.toInt() >= 48) && (y.toInt() <= 58)) continue else
+                if (y !in '0'..'9')
                     throw IllegalArgumentException()
         } else throw IllegalArgumentException()
     var result = f[0].toInt()
     for (x in 1 until (f.size - 1) step 2) {
-        when {
-            f[x] == "+" -> result += f[x + 1].toInt()
-            f[x] == "-" -> result -= f[x + 1].toInt()
+        when (f[x]) {
+            "+" -> result += f[x + 1].toInt()
+            "-" -> result -= f[x + 1].toInt()
             else -> throw IllegalArgumentException()
         }
     }
@@ -261,11 +247,11 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val f = str.split(' ')
+    val f = str.toLowerCase().split(' ')
     var g = 0
     var result = -1
-    if (f.size >= 2) for (x in 0 until (f.size - 1)) {
-        if (f[x].toLowerCase() == f[x + 1].toLowerCase()) {
+    for (x in 0 until (f.size - 1)) {
+        if (f[x] == f[x + 1]) {
             result = x + g
             break
         }
@@ -286,26 +272,21 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    val h = mutableMapOf<String, Double>()
-    val result = StringBuilder()
     val f = description.split("; ")
+    var result = ""
+    var s = 0.0
+    var max = 0.0
     return try {
         for (x in f) {
             val w = x.split(' ')
-            if ((x.isEmpty()) || (w[1].toDouble() < 0))
-                return result.toString()
-            h += (w[0] to w[1].toDouble())
+            if ((x.isEmpty()) || (w[1].toDouble() < 0)) return ""
+            max = maxOf(max, w[1].toDouble())
+            if (s != max) result = w[0]
+            s = max
         }
-        var max = 0.0
-        for (x in h.values) max = maxOf(max, x)
-        for ((y, x) in h)
-            if (x == max) {
-                result.append(y)
-                break
-            }
-        result.toString()
+        result
     } catch (e: NumberFormatException) {
-        result.toString()
+        ""
     }
 }
 
@@ -410,5 +391,81 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    TODO()
+    val list = mutableListOf<Int>()
+    var n = cells / 2
+    var hop = 0
+    for (x in 0 until cells) list += 0
+    var s1 = 0
+    val str1 = StringBuilder()
+    val str2 = StringBuilder()
+    for (x in commands) {
+        if (x == '[') s1++
+        if (x == ']') s1--
+    }
+    if (s1 != 0) throw IllegalArgumentException()
+    for (x in 0 until commands.length) if (hop < limit) {
+        if ((n >= 0) && (n <= cells - 1)) {
+            if (x == s1) {
+                when (commands[x]) {
+                    '<' -> n--
+                    '>' -> n++
+                    '+' -> list[n]++
+                    '-' -> list[n]--
+                    ' ' -> Double.NaN
+                    '[' -> {
+                        var s2 = 1
+                        for (char1 in (x + 1) until commands.length) {
+                            if (commands[char1] == '[') s2++
+                            if (commands[char1] == ']') s2--
+                            if (s2 == 0) break else str1.append(commands[char1])
+                        }
+                        s1 += str1.length + 1
+                        while ((list[n] != 0) && (hop < limit - 1)) {
+                            s2 = 0
+                            hop++
+                            for (char in 0 until str1.length) {
+                                if (char == s2) {
+                                    when (str1[char]) {
+                                        '<' -> n--
+                                        '>' -> n++
+                                        '+' -> list[n]++
+                                        '-' -> list[n]--
+                                        '[' -> {
+                                            for (char2 in (char + 1) until str1.length)
+                                                if (str1[char2] == ']') break else str2.append(str1[char2])
+                                            s2 += str2.length + 1
+                                            while ((list[n] != 0) && (hop < limit - 1)) {
+                                                hop++
+                                                for (char3 in str2.toString()) {
+                                                    when (char3) {
+                                                        '<' -> n--
+                                                        '>' -> n++
+                                                        '+' -> list[n]++
+                                                        '-' -> list[n]--
+                                                        else -> Double.NaN
+                                                    }
+                                                    if (hop == limit - 1) break
+                                                    hop++
+                                                }
+                                            }
+                                        }
+                                        else -> Double.NaN
+                                    }
+                                    str2.delete(0, str2.length)
+                                    s2++
+                                    if (hop == limit - 1) break
+                                    hop++
+                                }
+                            }
+                        }
+                    }
+                    else -> throw IllegalArgumentException()
+                }
+                str1.delete(0, str1.length)
+                s1++
+                hop++
+            }
+        } else throw IllegalStateException()
+    } else break
+    return list
 }

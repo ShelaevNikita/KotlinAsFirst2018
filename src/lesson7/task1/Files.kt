@@ -81,24 +81,23 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val file = StringBuilder()
-    file.append(File(inputName).readText())
+    val g = File(inputName).readText()
     val result = File(outputName).bufferedWriter()
-    var f = 1
-    for (x in file) {
-        if ((x == 'Ч') || (x == 'ч') || (x == 'Щ') ||
-                (x == 'щ') || (x == 'Ш') || (x == 'ш') ||
-                (x == 'Ж') || (x == 'ж')) {
-            if (file[f] == 'Я') file[f] = 'А'
-            if (file[f] == 'я') file[f] = 'а'
-            if (file[f] == 'Ы') file[f] = 'И'
-            if (file[f] == 'ы') file[f] = 'и'
-            if (file[f] == 'Ю') file[f] = 'У'
-            if (file[f] == 'ю') file[f] = 'у'
+    result.write(g[0].toString())
+    for (x in 1 until g.length) {
+        var k = g[x]
+        if ((g[x - 1] == 'Ч') || (g[x - 1] == 'ч') || (g[x - 1] == 'Щ') ||
+                (g[x - 1] == 'щ') || (g[x - 1] == 'Ш') || (g[x - 1] == 'ш') ||
+                (g[x - 1] == 'Ж') || (g[x - 1] == 'ж')) {
+            if (g[x] == 'Я') k = 'А'
+            if (g[x] == 'я') k = 'а'
+            if (g[x] == 'Ы') k = 'И'
+            if (g[x] == 'ы') k = 'и'
+            if (g[x] == 'Ю') k = 'У'
+            if (g[x] == 'ю') k = 'у'
         }
-        f++
+        result.write(k.toString())
     }
-    result.write(file.toString())
     result.close()
 }
 
@@ -122,34 +121,16 @@ fun sibilants(inputName: String, outputName: String) {
 fun centerFile(inputName: String, outputName: String) {
     val file = File(inputName).readLines().toMutableList()
     val result = File(outputName).bufferedWriter()
-    val d = StringBuilder()
-    for (x in 0 until file.size) {
-        var s1 = 0
-        var s2 = 0
-        for (char in file[x]) if (char == ' ') s1++ else break
-        for (char in (file[x].length - 1) downTo 0) if ((file[x])[char] == ' ')
-            s2++ else break
-        for (char in s1 until (file[x].length - s2)) d.append((file[x])[char])
-        file[x] = d.toString()
-        d.delete(0, d.length)
-    }
+    for (x in 0 until file.size) file[x] = file[x].trim()
     var max = 0
     for (x in file) max = maxOf(x.length, max)
     for (x in file) {
+        val d = StringBuilder()
+        val h = (max - x.length) / 2
+        for (p in 0 until h) d.append(' ')
         d.append(x)
-        var lenght = d.length
-        while (lenght != max) {
-            lenght++
-            if (lenght == max) break
-            val f = d.toString()
-            d.delete(0, d.length)
-            d.append(' ')
-            d.append(f)
-            lenght++
-        }
         result.write(d.toString())
         result.newLine()
-        d.delete(0, d.length)
     }
     result.close()
 }
@@ -184,31 +165,16 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     val file = File(inputName).readLines().toMutableList()
     val result = File(outputName).bufferedWriter()
-    val d = StringBuilder()
-    var s1: Int
-    var s2: Int
-    for (x in 0 until file.size) {
-        s1 = 0
-        s2 = 0
-        for (char in file[x]) if (char == ' ') s1++ else break
-        for (char in (file[x].length - 1) downTo 0) if ((file[x])[char] == ' ')
-            s2++ else break
-        for (char in s1 until (file[x].length - s2)) {
-            if ((char >= 0) && ((file[x])[char] == ' ') &&
-                    ((file[x])[char - 1] == ' ')) continue
-            else d.append((file[x])[char])
-        }
-        file[x] = d.toString()
-        d.delete(0, d.length)
-    }
+    for (x in 0 until file.size) file[x] = file[x].trim()
     var max = 0
     for (x in file) max = maxOf(x.length, max)
     for (x in 0 until file.size) {
-        s2 = 0
         val count = max - file[x].length
-        s1 = 0
+        var s1 = 0
+        var s2 = 0
         if (file[x].isEmpty()) s1++
         while ((file[x].length != max) && (s1 == 0)) {
+            val d = StringBuilder()
             for (char in 0 until file[x].length) {
                 d.append((file[x])[char])
                 if (((file[x])[char] == ' ') && (char >= 1) &&
@@ -223,7 +189,6 @@ fun alignFileByWidth(inputName: String, outputName: String) {
                 }
             }
             file[x] = d.toString()
-            d.delete(0, d.length)
         }
         result.write(file[x])
         result.newLine()
@@ -251,43 +216,22 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  */
 fun top20Words(inputName: String): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    val set = mutableSetOf<Pair<String, Int>>()
     val f = StringBuilder()
     for ((q, string) in File(inputName).readLines().withIndex()) {
         if (q > 0) f.append(' ')
-        for (char in string) {
-            if ((char == '1') || (char == '2') || (char == '3') || (char == '4') ||
-                    (char == '5') || (char == '6') || (char == '7') || (char == '8') ||
-                    (char == '9') || (char == '0') || (char == '-') || (char == '!') ||
-                    (char == '?') || (char == ',') || (char == '.') || (char == ':') ||
-                    (char == ';') || (char == '—') || (char == '(') || (char == ')') ||
-                    (char == '«') || (char == '»') || (char == '*') || (char == '/'))
-                f.append(' ')
-            else f.append(char.toLowerCase())
-        }
+        f.append(string.toLowerCase()
+                .replace(Regex("""[1234567890.,!?:;—()«»*/-]"""), " "))
     }
     val s = f.toString().split(' ')
     var count = 0
-    for (x in s) {
-        if (x.isNotEmpty()) {
-            for (y in s)
-                if (x == y) count++
-            set += (x to count)
-        }
+    for (x in s)
+        if (x.isNotEmpty()) result += (x to 0)
+    for (x in result.keys) {
+        for (y in s) if (x == y) count++
+        result[x] = count
         count = 0
     }
-    while ((set.isNotEmpty()) && (count != 20)) {
-        var max = 0
-        for ((_, second) in set) max = maxOf(max, second)
-        for ((first, second) in set)
-            if (second == max) {
-                result += (first to second)
-                set -= (first to second)
-                count++
-                break
-            }
-    }
-    return result
+    return result.toList().sortedBy { it.second }.reversed().take(20).toMap()
 }
 
 /**
@@ -329,15 +273,15 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
     val file = File(inputName).readText()
     val result = File(outputName).bufferedWriter()
     val f = StringBuilder()
+    val dict = mutableMapOf<Char, String>()
+    for ((x, y) in dictionary) dict += (x.toLowerCase() to y.toLowerCase())
     for (ch in 0 until file.length) {
         var g = 0
-        for ((char, string) in dictionary)
-            if (file[ch].toLowerCase() == char.toLowerCase()) {
-                if ((file[ch] != char.toLowerCase()) && (string.isNotEmpty())) {
-                    f.append(string[0].toUpperCase())
-                    for (p in 1 until string.length)
-                        f.append(string[p].toLowerCase())
-                } else f.append(string.toLowerCase())
+        for ((char, string) in dict)
+            if (file[ch].toLowerCase() == char) {
+                if ((file[ch] != char) && (string.isNotEmpty())) {
+                    f.append(string.capitalize())
+                } else f.append(string)
                 g++
                 break
             }
@@ -372,25 +316,19 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    val file = File(inputName).readLines().toMutableList()
+    val file = File(inputName).readLines().toList()
     val result = File(outputName).bufferedWriter()
     val list = mutableListOf<String>()
     val res = StringBuilder()
-    while (file.isNotEmpty()) {
-        var g = 0
-        for (char1 in 0 until file[0].length) {
-            for (char2 in (char1 + 1) until file[0].length)
-                if ((file[0])[char1].toLowerCase() == (file[0])[char2].toLowerCase()) {
-                    g++
-                    break
-                }
-            if (g != 0) break
-        }
-        if (g == 0) list += file[0]
-        file -= file[0]
-    }
     var max = 0
-    for (string in list) max = maxOf(max, string.length)
+    for (x in file) {
+        val set = mutableSetOf<Char>()
+        for (y in x) set += y.toLowerCase()
+        if (set.size == x.length) {
+            list += x
+            max = maxOf(max, x.length)
+        }
+    }
     for (string in list) {
         if (string.length == max) {
             if (res.isNotEmpty()) res.append(", ")
@@ -463,28 +401,33 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         var find3 = Regex("\\*").findAll(x, 0).count()
         if (x.isNotEmpty()) {
             for (char in 0 until x.length) {
-                if (count > char) continue else {
-                    if ((find1 % 2 == 0) && (x[char] == '~') && (s3 == 0) &&
+                if (count <= char) {
+                    if ((find1 >= 2) && (x[char] == '~') && (s1 == 0) &&
                             (char < x.length - 1) && (x[char + 1] == '~')) {
-                        s3 = 1
+                        s1 = 1
                         find1--
                         string.append("<s>")
                         count += 2
                         continue
                     }
-                    if ((x[char] == '~') && (s3 == 1) &&
+                    if ((x[char] == '~') && (s1 == 1) &&
                             (char < x.length - 1) && (x[char + 1] == '~')) {
-                        s3 = 0
+                        s1 = 0
                         find1--
                         string.append("</s>")
                         count += 2
                         continue
                     }
-                    if ((find2 % 2 == 0) && (x[char] == '*') && (s2 == 0) &&
+                    if ((find2 >= 2) && (x[char] == '*') && (s2 == 0) &&
                             (char < x.length - 1) && (x[char + 1] == '*')) {
                         s2 = 1
                         find2--
                         string.append("<b>")
+                        count += 2
+                        continue
+                    }
+                    if ((find2 < 2) && (x[char] == '*') && (s2 == 0) &&
+                            (char < x.length - 1) && (x[char + 1] == '*')) {
                         count += 2
                         continue
                     }
@@ -496,15 +439,15 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                         count += 2
                         continue
                     }
-                    if ((find3 % 2 == 0) && (x[char] == '*') && (s1 == 0)) {
-                        s1 = 1
+                    if ((find3 >= 2) && (x[char] == '*') && (s3 == 0)) {
+                        s3 = 1
                         find3--
                         count++
                         string.append("<i>")
                         continue
                     }
-                    if ((x[char] == '*') && (s1 == 1)) {
-                        s1 = 0
+                    if ((x[char] == '*') && (s3 == 1)) {
+                        s3 = 0
                         find3--
                         count++
                         string.append("</i>")
@@ -732,7 +675,6 @@ fun markdownToHtml(inputName: String, outputName: String) {
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val result = File(outputName).bufferedWriter()
     val size = digitNumber(lhv * rhv) + 1
-    val string = StringBuilder()
     val def = StringBuilder()
     val list = mutableListOf<Int>()
     list += lhv
@@ -743,6 +685,7 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     list += lhv * rhv
     while (def.length != size) def.append('-')
     for (x in 0 until list.size) {
+        val string = StringBuilder()
         var d = 0
         if (x == 1) {
             string.append('*')
@@ -763,7 +706,6 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
         string.append(list[x])
         result.write(string.toString())
         result.newLine()
-        string.delete(0, string.length)
     }
     result.close()
 }
@@ -797,20 +739,26 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     var s1 = 0
     var s2 = 0
     var length = 0
-    string.append(' ').append(lhv).append(" | ").append(rhv)
-    result.write(string.toString())
-    result.newLine()
-    string.delete(0, string.length)
     for (x in 0 until digitNumber(del)) {
         val number = (del / pow(10.0,
                 (digitNumber(del) - x - 1).toDouble()) % 10).toInt()
         val pz = rhv * number
         if (x == 0) {
+            if (digitNumber(pz) + 1 != digitlhv)
+                string.append(' ')
+            string.append(lhv).append(" | ").append(rhv)
+            result.write(string.toString())
+            result.newLine()
+            string.delete(0, string.length)
             length += digitNumber(pz)
-            s1 = lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
+            if (digitNumber(pz) + 1 != digitlhv)
+                s1 = lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
+            else s1 = lhv / pow(10.0, (digitlhv - length - 1).toDouble()).toInt() - pz
             string.append('-')
             string.append(pz)
-            for (y in 0 until (digitlhv - length + 3))
+            for (y in 0 until (digitlhv - length + 2))
+                string.append(' ')
+            if (digitNumber(pz) + 1 != digitlhv)
                 string.append(' ')
             string.append(del)
         } else {
@@ -832,7 +780,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         result.write(string.toString())
         result.newLine()
         string.delete(0, string.length)
-        if (length != digitlhv) {
+        if ((length != digitlhv) && (digitNumber(pz) + 1 < digitlhv)) {
             s2 = (lhv / (pow(10.0,
                     (digitlhv - length - 1).toDouble()).toInt())) % 10
             for (y in 0 until length + 1 - digitNumber(s1))
