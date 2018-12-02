@@ -35,7 +35,8 @@ data class Square(val column: Int, val row: Int) {
                 5 -> 'e'
                 6 -> 'f'
                 7 -> 'g'
-                else -> 'h'
+                8 -> 'h'
+                else -> throw IllegalArgumentException()
             }
             result.append(f).append(row)
         }
@@ -94,11 +95,14 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int =
+fun rookMoveNumber(start: Square, end: Square): Int {
+    return if ((start.inside()) && (end.inside())) {
         if (start == end) 0
         else if (((start.column == end.column) && (start.row != end.row)) ||
                 ((start.column != end.column) && (start.row == end.row))) 1
         else 2
+    } else throw IllegalArgumentException()
+}
 
 
 /**
@@ -342,7 +346,22 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightMoveNumber(start: Square, end: Square): Int {
+    if ((start.inside()) && (end.inside())) {
+        val d1 = abs(start.column - end.column)
+        val d2 = abs(start.row - end.row)
+        var result = minOf(d1, d2)
+        if ((d1 == 1) && (d2 == 1)) {
+            result++
+            if (((end.column == 8) && (end.row == 8)) ||
+                    ((end.column == 1) && (end.row == 1))) result += 2
+        }
+        if (result == 0) result = maxOf(d1, d2)
+        if ((d1 == 2) && (d2 == 2)) result += 2
+        if ((d1 == 7) && (d2 == 7)) result--
+        return result
+    } else throw IllegalArgumentException()
+}
 
 /**
  * Очень сложная

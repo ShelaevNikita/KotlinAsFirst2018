@@ -89,7 +89,7 @@ fun dateStrToDigit(str: String): String {
             "декабря" -> 12
             else -> -1
         } else -1
-        if (r != -1) return ""
+        if (r == -1) return ""
         val days = daysInMonth(r, f[2].toInt())
         return if (f[0].toInt() <= days) String.format("%02d.%02d.%d",
                 f[0].toInt(), r, f[2].toInt()) else ""
@@ -127,7 +127,7 @@ fun dateDigitToStr(digital: String): String {
             12 -> "декабря"
             else -> ""
         } else ""
-        if (r.isNotEmpty()) return ""
+        if (r.isEmpty()) return ""
         val days = daysInMonth(f[1].toInt(), f[2].toInt())
         return if (f[0].toInt() <= days)
             String.format("%d %s %d", f[0].toInt(), r, f[2].toInt()) else ""
@@ -149,7 +149,8 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val d = phone[0]
+    val d: Char
+    if (phone.isNotEmpty()) d = phone[0] else return ""
     val f = phone.replace(Regex("""[-+ ()]"""), "")
     val result = StringBuilder()
     try {
@@ -281,7 +282,7 @@ fun mostExpensive(description: String): String {
             val w = x.split(' ')
             if ((x.isEmpty()) || (w[1].toDouble() < 0)) return ""
             max = maxOf(max, w[1].toDouble())
-            if (s != max) result = w[0]
+            if ((s != max) || (f.size == 1)) result = w[0]
             s = max
         }
         result
@@ -390,82 +391,4 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    val list = mutableListOf<Int>()
-    var n = cells / 2
-    var hop = 0
-    for (x in 0 until cells) list += 0
-    var s1 = 0
-    val str1 = StringBuilder()
-    val str2 = StringBuilder()
-    for (x in commands) {
-        if (x == '[') s1++
-        if (x == ']') s1--
-    }
-    if (s1 != 0) throw IllegalArgumentException()
-    for (x in 0 until commands.length) if (hop < limit) {
-        if ((n >= 0) && (n <= cells - 1)) {
-            if (x == s1) {
-                when (commands[x]) {
-                    '<' -> n--
-                    '>' -> n++
-                    '+' -> list[n]++
-                    '-' -> list[n]--
-                    ' ' -> Double.NaN
-                    '[' -> {
-                        var s2 = 1
-                        for (char1 in (x + 1) until commands.length) {
-                            if (commands[char1] == '[') s2++
-                            if (commands[char1] == ']') s2--
-                            if (s2 == 0) break else str1.append(commands[char1])
-                        }
-                        s1 += str1.length + 1
-                        while ((list[n] != 0) && (hop < limit - 1)) {
-                            s2 = 0
-                            hop++
-                            for (char in 0 until str1.length) {
-                                if (char == s2) {
-                                    when (str1[char]) {
-                                        '<' -> n--
-                                        '>' -> n++
-                                        '+' -> list[n]++
-                                        '-' -> list[n]--
-                                        '[' -> {
-                                            for (char2 in (char + 1) until str1.length)
-                                                if (str1[char2] == ']') break else str2.append(str1[char2])
-                                            s2 += str2.length + 1
-                                            while ((list[n] != 0) && (hop < limit - 1)) {
-                                                hop++
-                                                for (char3 in str2.toString()) {
-                                                    when (char3) {
-                                                        '<' -> n--
-                                                        '>' -> n++
-                                                        '+' -> list[n]++
-                                                        '-' -> list[n]--
-                                                        else -> Double.NaN
-                                                    }
-                                                    if (hop == limit - 1) break
-                                                    hop++
-                                                }
-                                            }
-                                        }
-                                        else -> Double.NaN
-                                    }
-                                    str2.delete(0, str2.length)
-                                    s2++
-                                    if (hop == limit - 1) break
-                                    hop++
-                                }
-                            }
-                        }
-                    }
-                    else -> throw IllegalArgumentException()
-                }
-                str1.delete(0, str1.length)
-                s1++
-                hop++
-            }
-        } else throw IllegalStateException()
-    } else break
-    return list
-}
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()

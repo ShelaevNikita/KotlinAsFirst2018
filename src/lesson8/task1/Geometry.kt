@@ -152,7 +152,17 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()
+    fun crossPoint(other: Line): Point {
+        if (angle == other.angle) throw IllegalArgumentException()
+        val s1 = tan(angle)
+        val s2 = b / cos(angle)
+        val s3 = tan(other.angle)
+        val s4 = other.b / cos(other.angle)
+        val pointx = (s4 - s2) / (s1 - s3)
+        val pointy = if (other.angle != PI / 2) s3 * pointx + s4
+        else s1 * pointx + s2
+        return Point(pointx, pointy)
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -171,13 +181,18 @@ class Line private constructor(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val angle: Double
-    angle = if (s.begin.y > s.end.y) {
-        val f = Point(s.begin.x, s.end.y)
-        PI - acos(s.begin.distance(f) / s.begin.distance(s.end))
-    } else {
-        val f = Point(s.end.x, s.begin.y)
-        acos(s.begin.distance(f) / s.begin.distance(s.end))
+    val angle = when {
+        s.begin.y == s.end.y -> 0.0
+        s.begin.x == s.end.x -> PI / 2
+        (((s.begin.y > s.end.y) && (s.begin.x < s.end.x)) ||
+                ((s.begin.y < s.end.y) && (s.begin.x > s.end.x))) -> {
+            val f = Point(s.begin.x, s.end.y)
+            PI - acos(s.end.distance(f) / s.begin.distance(s.end))
+        }
+        else -> {
+            val f = Point(s.end.x, s.begin.y)
+            acos(s.begin.distance(f) / s.begin.distance(s.end))
+        }
     }
     return Line(s.begin, angle)
 }
@@ -197,11 +212,9 @@ fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
     val point = Point(((a.x + b.x) / 2), ((a.y + b.y) / 2))
-    val f = Point(maxOf(a.x, b.x), a.y)
-    val angle1 = if (a.y > b.y)
-        (PI - acos((a.distance(f) / a.distance(b))))
-    else acos((a.distance(f) / a.distance(b)))
-    val angle = abs(angle1 - PI / 2)
+    val line = lineByPoints(a, b)
+    val angle = if (line.angle >= PI / 2) line.angle - PI / 2
+    else line.angle + PI / 2
     return Line(point, angle)
 }
 
@@ -237,7 +250,14 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
+    val line1 = bisectorByPoints(a, b)
+    val line2 = bisectorByPoints(a, c)
+    if (line1.angle == line2.angle) throw IllegalArgumentException()
+    val c1 = line1.crossPoint(line2)
+    val radius = c1.distance(a)
+    return Circle(c1, radius)
+}
 
 /**
  * Очень сложная

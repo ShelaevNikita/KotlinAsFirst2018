@@ -83,7 +83,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
 fun sibilants(inputName: String, outputName: String) {
     val g = File(inputName).readText()
     val result = File(outputName).bufferedWriter()
-    result.write(g[0].toString())
+    if (g.isNotEmpty()) result.write(g[0].toString()) else result.close()
     for (x in 1 until g.length) {
         var k = g[x]
         if ((g[x - 1] == 'Ч') || (g[x - 1] == 'ч') || (g[x - 1] == 'Щ') ||
@@ -385,69 +385,82 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val file = File(inputName).readLines().toMutableList()
     val result = File(outputName).bufferedWriter()
-    val string = StringBuilder()
     val list = listOf("<html>", "<body>", "<p>", "</html>", "</body>", "</p>")
     for (x in 0..2) {
         result.write(list[x])
         result.newLine()
     }
-    var s1 = 0
-    var s2 = 0
-    var s3 = 0
-    var count = 0
     for (x in file) {
+        val string = StringBuilder()
+        var s1 = 0
+        var s2 = 0
+        var s3 = 0
+        var count = 0
         var find1 = Regex("~~").findAll(x, 0).count()
         var find2 = Regex("\\*\\*").findAll(x, 0).count()
         var find3 = Regex("\\*").findAll(x, 0).count()
         if (x.isNotEmpty()) {
             for (char in 0 until x.length) {
                 if (count <= char) {
-                    if ((find1 >= 2) && (x[char] == '~') && (s1 == 0) &&
+                    if ((find1 >= 2) && (x[char] == '~') &&
                             (char < x.length - 1) && (x[char + 1] == '~')) {
-                        s1 = 1
                         find1--
-                        string.append("<s>")
+                        s1 = if (s1 == 0) {
+                            string.append("<s>")
+                            1
+                        } else {
+                            string.append("</s>")
+                            0
+                        }
                         count += 2
                         continue
                     }
-                    if ((x[char] == '~') && (s1 == 1) &&
+                    if ((find1 == 1) && (x[char] == '~') && (s1 == 1) &&
                             (char < x.length - 1) && (x[char + 1] == '~')) {
-                        s1 = 0
                         find1--
                         string.append("</s>")
                         count += 2
                         continue
                     }
-                    if ((find2 >= 2) && (x[char] == '*') && (s2 == 0) &&
+                    if ((find2 >= 2) && (x[char] == '*') &&
                             (char < x.length - 1) && (x[char + 1] == '*')) {
-                        s2 = 1
                         find2--
-                        string.append("<b>")
+                        s2 = if (s2 == 0) {
+                            string.append("<b>")
+                            1
+                        } else {
+                            string.append("</b>")
+                            0
+                        }
                         count += 2
                         continue
                     }
-                    if ((find2 < 2) && (x[char] == '*') && (s2 == 0) &&
+                    if ((find2 == 1) && (x[char] == '*') && (s2 == 1) &&
                             (char < x.length - 1) && (x[char + 1] == '*')) {
-                        count += 2
-                        continue
-                    }
-                    if ((x[char] == '*') && (s2 == 1) &&
-                            (char < x.length - 1) && (x[char + 1] == '*')) {
-                        s2 = 0
                         find2--
                         string.append("</b>")
                         count += 2
                         continue
                     }
-                    if ((find3 >= 2) && (x[char] == '*') && (s3 == 0)) {
-                        s3 = 1
-                        find3--
-                        count++
-                        string.append("<i>")
+                    if ((x[char] == '*') && (char < x.length - 1) &&
+                            (x[char + 1] == '*')) {
+                        string.append("**")
+                        count += 2
                         continue
                     }
-                    if ((x[char] == '*') && (s3 == 1)) {
-                        s3 = 0
+                    if ((find3 >= 2) && (x[char] == '*')) {
+                        find3--
+                        count++
+                        s3 = if (s3 == 0) {
+                            string.append("<i>")
+                            1
+                        } else {
+                            string.append("</i>")
+                            0
+                        }
+                        continue
+                    }
+                    if ((find3 == 1) && (x[char] == '*') && (s3 == 1)) {
                         find3--
                         count++
                         string.append("</i>")
@@ -457,10 +470,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     count++
                 }
             }
-            count = 0
             result.write(string.toString())
             result.newLine()
-            string.delete(0, string.length)
         } else {
             result.write(list[5])
             result.newLine()
@@ -744,21 +755,19 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                 (digitNumber(del) - x - 1).toDouble()) % 10).toInt()
         val pz = rhv * number
         if (x == 0) {
-            if (digitNumber(pz) + 1 != digitlhv)
+            length += digitNumber(pz)
+            s1 = lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
+            if (pz >= (s1 + pz) / 10)
                 string.append(' ')
             string.append(lhv).append(" | ").append(rhv)
             result.write(string.toString())
             result.newLine()
             string.delete(0, string.length)
-            length += digitNumber(pz)
-            if (digitNumber(pz) + 1 != digitlhv)
-                s1 = lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
-            else s1 = lhv / pow(10.0, (digitlhv - length - 1).toDouble()).toInt() - pz
             string.append('-')
             string.append(pz)
             for (y in 0 until (digitlhv - length + 2))
                 string.append(' ')
-            if (digitNumber(pz) + 1 != digitlhv)
+            if (pz >= (s1 + pz) / 10)
                 string.append(' ')
             string.append(del)
         } else {
@@ -780,7 +789,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         result.write(string.toString())
         result.newLine()
         string.delete(0, string.length)
-        if ((length != digitlhv) && (digitNumber(pz) + 1 < digitlhv)) {
+        if ((length != digitlhv) && (digitNumber(del) != 1)) {
             s2 = (lhv / (pow(10.0,
                     (digitlhv - length - 1).toDouble()).toInt())) % 10
             for (y in 0 until length + 1 - digitNumber(s1))
