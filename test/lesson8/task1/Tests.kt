@@ -51,7 +51,7 @@ class Tests {
 
     private fun approxEquals(expected: Line, actual: Line, delta: Double): Boolean =
             abs(expected.angle - actual.angle) <= delta &&
-            abs(expected.b - actual.b) <= delta
+                    abs(expected.b - actual.b) <= delta
 
     private fun assertApproxEquals(expected: Line, actual: Line, delta: Double = ulp(10.0)) {
         assertTrue(approxEquals(expected, actual, delta))
@@ -179,6 +179,7 @@ class Tests {
     fun bisectorByPoints() {
         assertApproxEquals(Line(Point(2.0, 0.0), PI / 2), bisectorByPoints(Point(0.0, 0.0), Point(4.0, 0.0)))
         assertApproxEquals(Line(Point(1.0, 2.0), 0.0), bisectorByPoints(Point(1.0, 5.0), Point(1.0, -1.0)))
+        assertApproxEquals(Line(Point(1.5, 1.5), PI / 4), bisectorByPoints(Point(0.0, 3.0), Point(3.0, 0.0)))
     }
 
     @Test

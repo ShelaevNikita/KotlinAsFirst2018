@@ -110,9 +110,8 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val f = digital.split('.')
-    val r: String
     try {
-        r = if (f.size == 3) when (f[1].toInt()) {
+        val r = if (f.size == 3) when (f[1].toInt()) {
             1 -> "января"
             2 -> "февраля"
             3 -> "марта"
@@ -153,13 +152,9 @@ fun flattenPhoneNumber(phone: String): String {
     if (phone.isNotEmpty()) d = phone[0] else return ""
     val f = phone.replace(Regex("""[-+ ()]"""), "")
     val result = StringBuilder()
-    try {
-        f.toDouble()
-        if (d == '+') result.append('+')
-        result.append(f)
-    } catch (e: NumberFormatException) {
-        return ""
-    }
+    if (f.any { !it.isDigit() }) return ""
+    if (d == '+') result.append('+')
+    result.append(f)
     return result.toString()
 }
 
@@ -273,22 +268,29 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    val f = description.split("; ")
     var result = ""
     var s = 0.0
     var max = 0.0
-    return try {
-        for (x in f) {
-            val w = x.split(' ')
-            if ((x.isEmpty()) || (w[1].toDouble() < 0)) return ""
+    var k = -1
+    while (k != description.length) {
+        val f = StringBuilder()
+        k++
+        for (x in k until description.length)
+            if (description[x] != ';') {
+                f.append(description[x])
+                k++
+            } else break
+        try {
+            val w = f.trim().split(' ')
+            if ((f.isEmpty()) || (w[1].toDouble() < 0)) return ""
             max = maxOf(max, w[1].toDouble())
-            if ((s != max) || (f.size == 1)) result = w[0]
+            if (s != max) result = w[0]
             s = max
+        } catch (e: NumberFormatException) {
+            return ""
         }
-        result
-    } catch (e: NumberFormatException) {
-        ""
     }
+    return result
 }
 
 /**

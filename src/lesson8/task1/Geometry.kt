@@ -139,7 +139,7 @@ fun circleByDiameter(diameter: Segment): Circle {
  * или: y * cos(angle) = x * sin(angle) + b, где b = point.y * cos(angle) - point.x * sin(angle).
  * Угол наклона обязан находиться в диапазоне от 0 (включительно) до PI (исключительно).
  */
-class Line private constructor(val b: Double, val angle: Double) {
+class Line(val b: Double, val angle: Double) {
     init {
         require(angle >= 0 && angle < PI) { "Incorrect line angle: $angle" }
     }
@@ -181,7 +181,7 @@ class Line private constructor(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val angle = when {
+    var angle = when {
         s.begin.y == s.end.y -> 0.0
         s.begin.x == s.end.x -> PI / 2
         (((s.begin.y > s.end.y) && (s.begin.x < s.end.x)) ||
@@ -194,6 +194,7 @@ fun lineBySegment(s: Segment): Line {
             acos(s.begin.distance(f) / s.begin.distance(s.end))
         }
     }
+    if (angle == PI) angle = 0.0
     return Line(s.begin, angle)
 }
 
@@ -226,7 +227,7 @@ fun bisectorByPoints(a: Point, b: Point): Line {
  */
 fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     if (circles.size < 2) throw IllegalArgumentException()
-    var min = Int.MAX_VALUE.toDouble()
+    var min = Double.MAX_VALUE
     var s = min
     val d = Point(0.0, 0.0)
     val pointd = Circle(d, 0.0)

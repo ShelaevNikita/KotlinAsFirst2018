@@ -52,7 +52,7 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    if (notation.length > 2) throw IllegalArgumentException()
+    if (notation.length != 2) throw IllegalArgumentException()
     val k1 = when (notation[0]) {
         'a' -> 1
         'b' -> 2
@@ -95,14 +95,13 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int {
-    return if ((start.inside()) && (end.inside())) {
-        if (start == end) 0
-        else if (((start.column == end.column) && (start.row != end.row)) ||
-                ((start.column != end.column) && (start.row == end.row))) 1
-        else 2
-    } else throw IllegalArgumentException()
-}
+fun rookMoveNumber(start: Square, end: Square): Int =
+        if ((start.inside()) && (end.inside())) {
+            if (start == end) 0
+            else if (((start.column == end.column) && (start.row != end.row)) ||
+                    ((start.column != end.column) && (start.row == end.row))) 1
+            else 2
+        } else throw IllegalArgumentException()
 
 
 /**
@@ -157,12 +156,11 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
     if ((start.inside()) && (end.inside())) {
         if (start == end) return 0
         if (abs(start.column - end.column) == abs(start.row - end.row)) return 1
-        for (x in 1..8)
-            for (y in 1..8) {
-                if ((abs(x - end.column) == abs(y - end.row)) &&
-                        (abs(x - start.column) == abs(y - start.row))) return 2
-            }
-        return -1
+        if (((abs(start.column - start.row) % 2 == 0) &&
+                        (abs(end.column - end.row) % 2 == 1)) ||
+                ((abs(start.column - start.row) % 2 == 1) &&
+                        (abs(end.column - end.row) % 2 == 0))) return -1
+        return 2
     } else throw IllegalArgumentException()
 }
 
@@ -193,15 +191,15 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         result += end
         return result
     }
-    for (x in 1..8)
-        for (y in 1..8) {
-            if ((abs(x - end.column) == abs(y - end.row)) &&
-                    (abs(x - start.column) == abs(y - start.row))) {
-                result += Square(x, y)
-                break
-            }
-            if (result.size == 2) break
-        }
+    var x = abs(start.column + end.column -
+            abs(start.row - end.row)) / 2
+    if (x < 1) x = abs(start.column + end.column +
+            abs(start.row - end.row)) / 2
+    var y = abs(start.row + end.row -
+            abs(start.column - end.column)) / 2
+    if (y < 1) y = abs(start.row + end.row +
+            abs(start.column - end.column)) / 2
+    result += Square(x, y)
     result += end
     return result
 }
@@ -346,22 +344,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int {
-    if ((start.inside()) && (end.inside())) {
-        val d1 = abs(start.column - end.column)
-        val d2 = abs(start.row - end.row)
-        var result = minOf(d1, d2)
-        if ((d1 == 1) && (d2 == 1)) {
-            result++
-            if (((end.column == 8) && (end.row == 8)) ||
-                    ((end.column == 1) && (end.row == 1))) result += 2
-        }
-        if (result == 0) result = maxOf(d1, d2)
-        if ((d1 == 2) && (d2 == 2)) result += 2
-        if ((d1 == 7) && (d2 == 7)) result--
-        return result
-    } else throw IllegalArgumentException()
-}
+fun knightMoveNumber(start: Square, end: Square): Int = TODO()
 
 /**
  * Очень сложная

@@ -165,7 +165,22 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     val file = File(inputName).readLines().toMutableList()
     val result = File(outputName).bufferedWriter()
-    for (x in 0 until file.size) file[x] = file[x].trim()
+    for (x in 0 until file.size) {
+        file[x] = file[x].trim()
+        val d = StringBuilder()
+        var q = 0
+        for (char in file[x]) {
+            if ((char == ' ') && (q == 0)) {
+                d.append(' ')
+                q = 1
+            }
+            if (char != ' ') {
+                d.append(char)
+                q = 0
+            }
+        }
+        file[x] = d.toString()
+    }
     var max = 0
     for (x in file) max = maxOf(x.length, max)
     for (x in 0 until file.size) {
@@ -316,14 +331,13 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    val file = File(inputName).readLines().toList()
+    val file = File(inputName).readLines()
     val result = File(outputName).bufferedWriter()
     val list = mutableListOf<String>()
     val res = StringBuilder()
     var max = 0
     for (x in file) {
-        val set = mutableSetOf<Char>()
-        for (y in x) set += y.toLowerCase()
+        val set = x.toLowerCase().toSet()
         if (set.size == x.length) {
             list += x
             max = maxOf(max, x.length)
@@ -757,15 +771,18 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         if (x == 0) {
             length += digitNumber(pz)
             s1 = lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
+            if (del == 0) s1 = lhv
             if (pz >= (s1 + pz) / 10)
                 string.append(' ')
             string.append(lhv).append(" | ").append(rhv)
             result.write(string.toString())
             result.newLine()
             string.delete(0, string.length)
+            if (del == 0) for (y in 0 until digitlhv - 2)
+                string.append(' ')
             string.append('-')
             string.append(pz)
-            for (y in 0 until (digitlhv - length + 2))
+            for (y in 0 until (digitlhv - string.length + 3))
                 string.append(' ')
             if (pz >= (s1 + pz) / 10)
                 string.append(' ')
@@ -785,6 +802,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         string.delete(0, string.length)
         if (x != 0) for (y in 0 until (length + 1 - max))
             string.append(' ')
+        if (del == 0) max = maxOf(digitNumber(pz) + 1, digitlhv)
         for (y in 0 until max) string.append('-')
         result.write(string.toString())
         result.newLine()
