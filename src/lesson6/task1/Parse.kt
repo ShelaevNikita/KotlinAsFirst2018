@@ -271,20 +271,13 @@ fun mostExpensive(description: String): String {
     var result = ""
     var s = 0.0
     var max = 0.0
-    var k = -1
-    while (k != description.length) {
-        val f = StringBuilder()
-        k++
-        for (x in k until description.length)
-            if (description[x] != ';') {
-                f.append(description[x])
-                k++
-            } else break
+    val string = description.split("; ")
+    for (f in string) {
         try {
-            val w = f.trim().split(' ')
+            val w = f.split(' ')
             if ((f.isEmpty()) || (w[1].toDouble() < 0)) return ""
             max = maxOf(max, w[1].toDouble())
-            if (s != max) result = w[0]
+            if ((s != max) || (string.size == 1)) result = w[0]
             s = max
         } catch (e: NumberFormatException) {
             return ""

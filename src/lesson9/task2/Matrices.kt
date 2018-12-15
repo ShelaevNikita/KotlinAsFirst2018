@@ -359,7 +359,7 @@ fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> {
  */
 fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> {
     for (h in 0..(lock.height - key.height))
-        for (w in 0..(lock.width - key.height)) {
+        for (w in 0..(lock.width - key.width)) {
             var f = 0
             for (x in 0 until key.height)
                 for (y in 0 until key.width)
@@ -434,41 +434,43 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> {
  * 3 10 11  8
  */
 fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
+    var h = 0
+    var w = 0
+    for (x in 0 until matrix.height)
+        for (y in 0 until matrix.width)
+            if (matrix[x, y] == 0) {
+                h = x
+                w = y
+                break
+            }
     for (s in 0 until moves.size) {
-        var g = 0
-        for (x in 0 until matrix.height) {
-            for (y in 0 until matrix.width)
-                if (matrix[x, y] == 0) {
-                    if ((x != 0) && (matrix[x - 1, y] == moves[s])) {
-                        matrix[x - 1, y] = 0
-                        matrix[x, y] = moves[s]
-                        g++
-                        break
-                    }
-                    if ((x != matrix.height - 1) &&
-                            (matrix[x + 1, y] == moves[s])) {
-                        matrix[x + 1, y] = 0
-                        matrix[x, y] = moves[s]
-                        g++
-                        break
-                    }
-                    if ((y != 0) && (matrix[x, y - 1] == moves[s])) {
-                        matrix[x, y - 1] = 0
-                        matrix[x, y] = moves[s]
-                        g++
-                        break
-                    }
-                    if ((y != matrix.width - 1) &&
-                            (matrix[x, y + 1] == moves[s])) {
-                        matrix[x, y + 1] = 0
-                        matrix[x, y] = moves[s]
-                        g++
-                        break
-                    }
-                    throw IllegalStateException()
-                }
-            if (g == 1) break
+        if ((h != 0) && (matrix[h - 1, w] == moves[s])) {
+            matrix[h - 1, w] = 0
+            matrix[h, w] = moves[s]
+            h--
+            continue
         }
+        if ((h != matrix.height - 1) &&
+                (matrix[h + 1, w] == moves[s])) {
+            matrix[h + 1, w] = 0
+            matrix[h, w] = moves[s]
+            h++
+            continue
+        }
+        if ((w != 0) && (matrix[h, w - 1] == moves[s])) {
+            matrix[h, w - 1] = 0
+            matrix[h, w] = moves[s]
+            w--
+            continue
+        }
+        if ((w != matrix.width - 1) &&
+                (matrix[h, w + 1] == moves[s])) {
+            matrix[h, w + 1] = 0
+            matrix[h, w] = moves[s]
+            w++
+            continue
+        }
+        throw IllegalStateException()
     }
     return matrix
 }

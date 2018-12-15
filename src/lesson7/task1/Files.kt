@@ -794,9 +794,8 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
                 string.append(' ')
             string.append('-').append(pz)
         }
-        var max: Int
-        if (x != 0) max = maxOf(digitNumber(pz) + 1, digitNumber(s1))
-        else max = digitNumber(pz) + 1
+        var max = if (x != 0) maxOf(digitNumber(pz) + 1, digitNumber(s1))
+        else digitNumber(pz) + 1
         result.write(string.toString())
         result.newLine()
         string.delete(0, string.length)
