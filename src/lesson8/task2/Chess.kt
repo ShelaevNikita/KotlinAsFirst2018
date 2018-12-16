@@ -2,6 +2,7 @@
 
 package lesson8.task2
 
+import lesson8.task3.Graph
 import kotlin.math.abs
 
 /**
@@ -191,13 +192,23 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         result += end
         return result
     }
-    var x = abs(start.column + end.column -
-            abs(start.row - end.row)) / 2
-    if (x < 1) x = abs(start.column + end.column +
-            abs(start.row - end.row)) / 2
+    var x = abs(start.column + end.column + abs(start.row - end.row)) / 2
     var y = abs(start.row + end.row + abs(start.column - end.column)) / 2
-    if (abs(x - start.column) != abs(start.row - y))
+    if ((abs(x - start.column) != abs(start.row - y)) &&
+            (abs(x - end.column) != abs(end.row - y))) {
         y = abs(start.row + end.row - abs(start.column - end.column)) / 2
+        x = abs(start.column + end.column - abs(start.row - end.row)) / 2
+    }
+    if ((abs(x - start.column) != abs(start.row - y)) &&
+            (abs(x - end.column) != abs(end.row - y))) {
+        y = abs(start.row + end.row + abs(start.column - end.column)) / 2
+        x = abs(start.column + end.column - abs(start.row - end.row)) / 2
+    }
+    if ((abs(x - start.column) != abs(start.row - y)) &&
+            (abs(x - end.column) != abs(end.row - y))) {
+        y = abs(start.row + end.row - abs(start.column - end.column)) / 2
+        x = abs(start.column + end.column + abs(start.row - end.row)) / 2
+    }
     result += Square(x, y)
     result += end
     return result
@@ -343,7 +354,32 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightMoveNumber(start: Square, end: Square): Int {
+    val graph = Graph()
+    for (x in 1..8)
+        for (y in 1..8)
+            graph.addVertex(Square(x, y).notation())
+    for (x in 1..8)
+        for (y in 1..8) {
+            if (Square(x + 1, y + 2).inside())
+                graph.connect(Square(x, y).notation(), Square(x + 1, y + 2).notation())
+            if (Square(x + 2, y + 1).inside())
+                graph.connect(Square(x, y).notation(), Square(x + 2, y + 1).notation())
+            if (Square(x - 1, y - 2).inside())
+                graph.connect(Square(x, y).notation(), Square(x - 1, y - 2).notation())
+            if (Square(x - 2, y - 1).inside())
+                graph.connect(Square(x, y).notation(), Square(x - 2, y - 1).notation())
+            if (Square(x + 1, y - 2).inside())
+                graph.connect(Square(x, y).notation(), Square(x + 1, y - 2).notation())
+            if (Square(x - 1, y + 2).inside())
+                graph.connect(Square(x, y).notation(), Square(x - 1, y + 2).notation())
+            if (Square(x + 2, y - 1).inside())
+                graph.connect(Square(x, y).notation(), Square(x + 2, y - 1).notation())
+            if (Square(x - 2, y + 1).inside())
+                graph.connect(Square(x, y).notation(), Square(x - 2, y + 1).notation())
+        }
+    return graph.bfs(start.notation(), end.notation())
+}
 
 /**
  * Очень сложная

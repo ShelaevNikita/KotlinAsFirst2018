@@ -214,8 +214,9 @@ fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
 fun bisectorByPoints(a: Point, b: Point): Line {
     val point = Point(((a.x + b.x) / 2), ((a.y + b.y) / 2))
     val line = lineByPoints(a, b)
-    val angle = if (line.angle >= PI / 2) line.angle - PI / 2
+    var angle = if (line.angle >= PI / 2) line.angle - PI / 2
     else line.angle + PI / 2
+    if (angle == PI) angle = 0.0
     return Line(point, angle)
 }
 

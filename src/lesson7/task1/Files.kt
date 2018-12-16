@@ -57,10 +57,10 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    val file = File(inputName).readText()
+    val file = File(inputName).readText().toLowerCase()
     for (c in substrings) {
         val s = Regex(c.toLowerCase())
-                .findAll(file.toLowerCase(), 0).count()
+                .findAll(file, 0).count()
         result += (c to s)
     }
     return result
@@ -770,9 +770,11 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         val pz = rhv * number
         if (x == 0) {
             length += digitNumber(pz)
-            s1 = lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
+            s1 = if (digitNumber(del) == 1)
+                lhv / pow(10.0, (digitlhv - length - 1).toDouble()).toInt() - pz
+            else lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
             if (del == 0) s1 = lhv
-            if (pz >= (s1 + pz) / 10)
+            if (lhv > (s1 + pz))
                 string.append(' ')
             string.append(lhv).append(" | ").append(rhv)
             result.write(string.toString())
@@ -784,7 +786,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             string.append(pz)
             for (y in 0 until (digitlhv - string.length + 3))
                 string.append(' ')
-            if (pz >= (s1 + pz) / 10)
+            if (lhv > (s1 + pz))
                 string.append(' ')
             string.append(del)
         } else {
