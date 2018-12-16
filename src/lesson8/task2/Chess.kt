@@ -194,17 +194,17 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
     }
     var x = abs(start.column + end.column + abs(start.row - end.row)) / 2
     var y = abs(start.row + end.row + abs(start.column - end.column)) / 2
-    if ((abs(x - start.column) != abs(start.row - y)) &&
+    if ((abs(x - start.column) != abs(start.row - y)) ||
             (abs(x - end.column) != abs(end.row - y))) {
         y = abs(start.row + end.row - abs(start.column - end.column)) / 2
         x = abs(start.column + end.column - abs(start.row - end.row)) / 2
     }
-    if ((abs(x - start.column) != abs(start.row - y)) &&
+    if ((abs(x - start.column) != abs(start.row - y)) ||
             (abs(x - end.column) != abs(end.row - y))) {
         y = abs(start.row + end.row + abs(start.column - end.column)) / 2
         x = abs(start.column + end.column - abs(start.row - end.row)) / 2
     }
-    if ((abs(x - start.column) != abs(start.row - y)) &&
+    if ((abs(x - start.column) != abs(start.row - y)) ||
             (abs(x - end.column) != abs(end.row - y))) {
         y = abs(start.row + end.row - abs(start.column - end.column)) / 2
         x = abs(start.column + end.column + abs(start.row - end.row)) / 2

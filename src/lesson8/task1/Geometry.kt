@@ -110,13 +110,12 @@ fun diameter(vararg points: Point): Segment {
     var max = 0.0
     var s = 0.0
     var segment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
-    for (a in 0 until points.size) {
+    for (a in 0 until points.size)
         for (b in (a + 1) until points.size) {
             max = maxOf(points[a].distance(points[b]), max)
             if (s != max) segment = Segment(points[a], points[b])
             s = max
         }
-    }
     return segment
 }
 
@@ -272,5 +271,35 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun minContainingCircle(vararg points: Point): Circle = TODO()
+fun minContainingCircle(vararg points: Point): Circle {
+    if (points.isEmpty()) throw IllegalArgumentException()
+    if (points.size == 1) return Circle(points[0], 0.0)
+    val list = points.toMutableList()
+    var max = 0.0
+    var s = 0.0
+    var diameter = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
+    for (a in 0 until points.size)
+        for (b in (a + 1) until points.size) {
+            max = maxOf(points[a].distance(points[b]), max)
+            if (s != max) diameter = Segment(points[a], points[b])
+            s = max
+        }
+    val k = Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2)
+    list -= diameter.begin
+    list -= diameter.end
+    var point = Point(0.0, 0.0)
+    max = 0.0
+    s = 0.0
+    for (a in 0 until list.size) {
+        max = maxOf(points[a].distance(k), max)
+        if (s != max) point = list[a]
+        s = max
+    }
+    val circle = circleByThreePoints(diameter.begin, diameter.end, point)
+    var d = 0
+    for (x in points) {
+        if (circle.contains(x)) d++
+    }
+    return if (d == points.size) circle else circleByDiameter(diameter)
+}
 
