@@ -273,9 +273,10 @@ fun mostExpensive(description: String): String {
     var max = 0.0
     val string = description.split("; ")
     for (f in string) {
+        if (f.isEmpty()) return ""
+        val w = f.split(' ')
         try {
-            val w = f.split(' ')
-            if ((f.isEmpty()) || (w[1].toDouble() < 0)) return ""
+            if (w[1].toDouble() < 0) return ""
             max = maxOf(max, w[1].toDouble())
             if ((s != max) || (string.size == 1)) result = w[0]
             s = max

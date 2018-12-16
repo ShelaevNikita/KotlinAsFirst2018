@@ -195,9 +195,9 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
             abs(start.row - end.row)) / 2
     if (x < 1) x = abs(start.column + end.column +
             abs(start.row - end.row)) / 2
-    val y = if (((x > 4) && (end.row > start.row)) || ((x <= 4) && end.row < start.row))
-        abs(start.row + end.row + abs(start.column - end.column)) / 2 else
-        abs(start.row + end.row - abs(start.column - end.column)) / 2
+    var y = abs(start.row + end.row + abs(start.column - end.column)) / 2
+    if (abs(x - start.column) != abs(start.row - y))
+        y = abs(start.row + end.row - abs(start.column - end.column)) / 2
     result += Square(x, y)
     result += end
     return result
