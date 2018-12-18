@@ -483,7 +483,8 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
                 if (((abs(square.row - end.row) == 0) || (abs(square.column - end.column)) == 0))
                     result = square
             }
-        if (abs(end.column - end.row) == 7) result = Square(result.column - 2, result.row)
+        if ((abs(end.column - end.row) == 7) && (list.size == knightMoveNumber(start, end) - 1))
+            result = Square(result.column - 2, result.row)
         if (result.inside()) Double.NaN else result = Square(result.column, result.row - 2)
         list += result
         string = result.notation()
