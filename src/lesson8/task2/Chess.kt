@@ -488,6 +488,6 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
         list += result
         string = result.notation()
     }
-      return list
+    return list
 }
 
