@@ -166,12 +166,12 @@ class Tests {
     fun knightTrajectory() {
         assertEquals(listOf(square("d3")), knightTrajectory(square("d3"), square("d3")))
         assertEquals(listOf(square("e4"), square("d6")), knightTrajectory(square("e4"), square("d6")))
+        knightTrajectory(square("d4"), square("a8")).assertKnightTrajectory(square("d4"), square("a8"), 3)
         knightTrajectory(square("a1"), square("a8")).assertKnightTrajectory(square("a1"), square("a8"), 5)
+        knightTrajectory(square("a8"), square("h1")).assertKnightTrajectory(square("a8"), square("h1"), 6)
+        knightTrajectory(square("g7"), square("h8")).assertKnightTrajectory(square("g7"), square("h8"), 4)
         knightTrajectory(square("f5"), square("g6")).assertKnightTrajectory(square("f5"), square("g6"), 2)
         knightTrajectory(square("g6"), square("g3")).assertKnightTrajectory(square("g6"), square("g3"), 3)
-        knightTrajectory(square("d4"), square("a8")).assertKnightTrajectory(square("d4"), square("a8"), 3)
         knightTrajectory(square("h7"), square("f5")).assertKnightTrajectory(square("h7"), square("f5"), 4)
-        knightTrajectory(square("g7"), square("h8")).assertKnightTrajectory(square("g7"), square("h8"), 4)
-        knightTrajectory(square("a8"), square("h1")).assertKnightTrajectory(square("a8"), square("h1"), 6)
     }
 }

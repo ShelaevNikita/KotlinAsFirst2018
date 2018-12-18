@@ -477,17 +477,25 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
                 }
             }
         }
-        if (result == Square(0, 0))
+        if ((result == Square(0, 0)) || (min == 4))
             for (neighbor in neighbors[string]!!) {
                 val square = square(neighbor)
                 if (((abs(square.row - end.row) == 0) || (abs(square.column - end.column)) == 0))
                     result = square
             }
-        if ((abs(end.column - end.row) == 7) && (list.size == knightMoveNumber(start, end) - 2)) {
-            if ((result == Square(2, 7)) || (result == Square(2, 2)))
-                result = Square(result.column + 3, result.row - 1)
-        } else if ((result == Square(7, 2)) || (result == Square(7, 7)))
-            result = Square(result.column - 3, result.row + 1)
+        if (((((abs(end.column - end.row) == 7) || ((abs(end.column - end.row) == 0) &&
+                        (end.column == 1)) && (list.size == knightMoveNumber(start, end) - 2) &&
+                        (abs(start.row - end.row) + abs(start.column - end.column)) >= 4) &&
+                        ((abs(result.row - end.row) + abs(result.column - end.column)) == 2) &&
+                        (abs(result.row - end.row)) == 1) ||
+                        ((abs(result.row - end.row) + abs(result.column - end.column)) == 4) &&
+                        (abs(result.row - end.row)) == 2))
+            when {
+                ((end.column == 1) && (end.row == 8)) -> result = Square(5, 6)
+                ((end.column == 8) && (end.row == 1)) -> result = Square(4, 3)
+                ((end.column == 1) && (end.row == 1)) -> result = Square(3, 6)
+                ((end.column == 8) && (end.row == 8)) -> result = Square(4, 6)
+            }
         list += result
         string = result.notation()
     }
