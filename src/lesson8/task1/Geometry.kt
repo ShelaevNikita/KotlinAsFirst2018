@@ -284,12 +284,12 @@ fun minContainingCircle(vararg points: Point): Circle {
             if (s != max) diameter = Segment(points[a], points[b])
             s = max
         }
-    val k = Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2)
     list -= diameter.begin
     list -= diameter.end
     var point = Point(0.0, 0.0)
     max = 0.0
     s = 0.0
+    val k = Point((diameter.begin.x + diameter.end.x) / 2.0, (diameter.begin.y + diameter.end.y) / 2.0)
     for (a in 0 until list.size) {
         max = maxOf(points[a].distance(k), max)
         if (s != max) point = list[a]

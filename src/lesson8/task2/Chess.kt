@@ -401,4 +401,93 @@ fun knightMoveNumber(start: Square, end: Square): Int {
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun knightTrajectory(start: Square, end: Square): List<Square> {
+    val graph = Graph()
+    for (x in 1..8)
+        for (y in 1..8)
+            graph.addVertex(Square(x, y).notation())
+    val neighbors = mutableMapOf<String, Set<String>>()
+    for (x in 1..8)
+        for (y in 1..8) {
+            val set = mutableSetOf<String>()
+            if (Square(x + 1, y + 2).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x + 1, y + 2).notation())
+                set += Square(x + 1, y + 2).notation()
+            }
+            if (Square(x + 2, y + 1).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x + 2, y + 1).notation())
+                set += Square(x + 2, y + 1).notation()
+            }
+            if (Square(x - 1, y - 2).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x - 1, y - 2).notation())
+                set += Square(x - 1, y - 2).notation()
+            }
+            if (Square(x - 2, y - 1).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x - 2, y - 1).notation())
+                set += Square(x - 2, y - 1).notation()
+            }
+            if (Square(x + 1, y - 2).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x + 1, y - 2).notation())
+                set += Square(x + 1, y - 2).notation()
+            }
+            if (Square(x - 1, y + 2).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x - 1, y + 2).notation())
+                set += Square(x - 1, y + 2).notation()
+            }
+            if (Square(x + 2, y - 1).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x + 2, y - 1).notation())
+                set += Square(x + 2, y - 1).notation()
+            }
+            if (Square(x - 2, y + 1).inside()) {
+                graph.connect(Square(x, y).notation(), Square(x - 2, y + 1).notation())
+                set += Square(x - 2, y + 1).notation()
+            }
+            neighbors += (Square(x, y).notation() to set)
+        }
+    val visited = mutableSetOf<String>()
+    visited += start.notation()
+    val list = mutableListOf<Square>()
+    list += start
+    if (start == end) return list.toList()
+    if (knightMoveNumber(start, end) == 1) {
+        list += end
+        return list
+    }
+    var string = start.notation()
+    while (list.size != knightMoveNumber(start, end) + 1) {
+        var min = Int.MAX_VALUE
+        var result = Square(0, 0)
+        var s = 0
+        for (neighbor in neighbors[string]!!) {
+            if (neighbor in visited) continue
+            if (neighbor == end.notation()) {
+                list += square(neighbor)
+                return list
+            }
+            visited += neighbor
+            val square = square(neighbor)
+            if ((((abs(square.row - end.row) + abs(square.column - end.column)) >= 3) &&
+                            ((abs(square.row - end.row) != 0) && (abs(square.column - end.column)) != 0)) ||
+                    ((abs(square.row - end.row) + abs(square.column - end.column)) == 2) &&
+                    (abs(square.column - end.column) <= 1)) {
+                min = minOf(abs(square.row - end.row) + abs(square.column - end.column), min)
+                if (s != min) {
+                    result = square
+                    s = min
+                }
+            }
+        }
+        if (result == Square(0, 0))
+            for (neighbor in neighbors[string]!!) {
+                val square = square(neighbor)
+                if (((abs(square.row - end.row) == 0) || (abs(square.column - end.column)) == 0))
+                    result = square
+            }
+        if (abs(end.column - end.row) == 7) result = Square(result.column - 2, result.row)
+        if (result.inside()) Double.NaN else result = Square(result.column, result.row - 2)
+        list += result
+        string = result.notation()
+    }
+    return list
+}
+

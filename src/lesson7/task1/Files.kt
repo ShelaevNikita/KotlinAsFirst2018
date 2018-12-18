@@ -770,7 +770,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         val pz = rhv * number
         if (x == 0) {
             length += digitNumber(pz)
-            s1 = if ((digitNumber(del) == 1) && (digitlhv != 1))
+            s1 = if ((digitNumber(del) == 1) && (digitlhv > length))
                 lhv / pow(10.0, (digitlhv - length - 1).toDouble()).toInt() - pz
             else lhv / pow(10.0, (digitlhv - length).toDouble()).toInt() - pz
             if (del == 0) s1 = lhv
