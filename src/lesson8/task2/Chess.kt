@@ -484,7 +484,7 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
                     result = square
             }
         if (((((abs(end.column - end.row) == 7) || ((abs(end.column - end.row) == 0) &&
-                        (end.column == 1) || (end.column == 8)) && (list.size == knightMoveNumber(start, end) - 2) &&
+                        ((end.column == 1) || (end.column == 8))) && (list.size == knightMoveNumber(start, end) - 2) &&
                         (abs(start.row - end.row) + abs(start.column - end.column)) >= 4) &&
                         ((abs(result.row - end.row) + abs(result.column - end.column)) == 2) &&
                         (abs(result.row - end.row)) == 1) ||
