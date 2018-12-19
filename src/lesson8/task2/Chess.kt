@@ -466,7 +466,7 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
             }
             visited += neighbor
             val square = square(neighbor)
-            if ((((abs(square.row - end.row) + abs(square.column - end.column)) >= 3) &&
+            if ((((abs(square.row - end.row) + abs(square.column - end.column)) >= 2) &&
                             ((abs(square.row - end.row) != 0) && (abs(square.column - end.column)) != 0)) ||
                     ((abs(square.row - end.row) + abs(square.column - end.column)) == 2) &&
                     (abs(square.column - end.column) <= 1)) {
@@ -477,10 +477,11 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
                 }
             }
         }
-        if ((result == Square(0, 0)) || (min == 4))
+        if ((result == Square(0, 0)) || (min % 2 == 0))
             for (neighbor in neighbors[string]!!) {
                 val square = square(neighbor)
-                if (((abs(square.row - end.row) == 0) || (abs(square.column - end.column)) == 0))
+                if ((((abs(square.row - end.row) == 0) || (abs(square.column - end.column)) == 0)) &&
+                        (abs(square.row - end.row) + abs(square.column - end.column)) <= min)
                     result = square
             }
         if (((((abs(end.column - end.row) == 7) || ((abs(end.column - end.row) == 0) &&

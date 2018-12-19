@@ -166,7 +166,10 @@ class Tests {
     fun knightTrajectory() {
         assertEquals(listOf(square("d3")), knightTrajectory(square("d3"), square("d3")))
         assertEquals(listOf(square("e4"), square("d6")), knightTrajectory(square("e4"), square("d6")))
+        knightTrajectory(square("h5"), square("b1")).assertKnightTrajectory(square("h5"), square("b1"), 4)
         knightTrajectory(square("d4"), square("a8")).assertKnightTrajectory(square("d4"), square("a8"), 3)
+        knightTrajectory(square("g3"), square("a1")).assertKnightTrajectory(square("g3"), square("a1"), 4)
+        knightTrajectory(square("c3"), square("h3")).assertKnightTrajectory(square("c3"), square("h3"), 3)
         knightTrajectory(square("a1"), square("a8")).assertKnightTrajectory(square("a1"), square("a8"), 5)
         knightTrajectory(square("a8"), square("h1")).assertKnightTrajectory(square("a8"), square("h1"), 6)
         knightTrajectory(square("g7"), square("h8")).assertKnightTrajectory(square("g7"), square("h8"), 4)
