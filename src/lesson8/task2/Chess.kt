@@ -489,13 +489,22 @@ fun knightTrajectory(start: Square, end: Square): List<Square> {
                         ((abs(result.row - end.row) + abs(result.column - end.column)) == 2) &&
                         (abs(result.row - end.row)) == 1) ||
                         ((abs(result.row - end.row) + abs(result.column - end.column)) == 4) &&
-                        (abs(result.row - end.row)) == 2))
-            when {
-                ((end.column == 1) && (end.row == 8)) -> result = Square(5, 6)
-                ((end.column == 8) && (end.row == 1)) -> result = Square(4, 3)
-                ((end.column == 1) && (end.row == 1)) -> result = Square(3, 6)
-                ((end.column == 8) && (end.row == 8)) -> result = Square(4, 6)
+                        (abs(result.row - end.row)) == 2)) {
+            s = 0
+            for (neighbor in neighbors[string]!!) {
+                val square = square(neighbor)
+                if ((((abs(square.row - end.row) + abs(square.column - end.column)) >= 3) &&
+                                ((abs(square.row - end.row) != 0) && (abs(square.column - end.column)) != 0)) ||
+                        ((abs(square.row - end.row) + abs(square.column - end.column)) == 2) &&
+                        (abs(square.column - end.column) <= 1)) {
+                    val r = minOf(abs(square.row - end.row) + abs(square.column - end.column), min)
+                    if ((s != r) && (square != result)) {
+                        result = square
+                        s = r
+                    }
+                }
             }
+        }
         list += result
         string = result.notation()
     }
