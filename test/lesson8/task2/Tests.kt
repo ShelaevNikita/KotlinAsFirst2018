@@ -145,6 +145,7 @@ class Tests {
         assertEquals(4, knightMoveNumber(square("h7"), square("f5")))
         assertEquals(4, knightMoveNumber(square("g7"), square("h8")))
         assertEquals(6, knightMoveNumber(square("a8"), square("h1")))
+        assertEquals(3, knightMoveNumber(square("a1"), square("b1")))
     }
 
     private fun List<Square>.assertKnightTrajectory(start: Square, end: Square, length: Int) {
@@ -172,9 +173,6 @@ class Tests {
         knightTrajectory(square("c3"), square("h3")).assertKnightTrajectory(square("c3"), square("h3"), 3)
         knightTrajectory(square("a1"), square("a8")).assertKnightTrajectory(square("a1"), square("a8"), 5)
         knightTrajectory(square("a8"), square("h1")).assertKnightTrajectory(square("a8"), square("h1"), 6)
-        knightTrajectory(square("g7"), square("h8")).assertKnightTrajectory(square("g7"), square("h8"), 4)
-        knightTrajectory(square("f5"), square("g6")).assertKnightTrajectory(square("f5"), square("g6"), 2)
-        knightTrajectory(square("g6"), square("g3")).assertKnightTrajectory(square("g6"), square("g3"), 3)
-        knightTrajectory(square("h7"), square("f5")).assertKnightTrajectory(square("h7"), square("f5"), 4)
+        knightTrajectory(square("a1"), square("b1")).assertKnightTrajectory(square("a1"), square("b1"), 3)
     }
 }

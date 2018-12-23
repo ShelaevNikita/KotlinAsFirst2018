@@ -49,6 +49,28 @@ class Graph {
         return -1
     }
 
+    fun bfsWithPath(start: String, finish: String) = bfsWithPath(this[start], this[finish])
+
+    private fun bfsWithPath(start: Vertex, finish: Vertex): List<Pair<String, Int>> {
+        val queue = ArrayDeque<Vertex>()
+        queue.add(start)
+        val visited = mutableMapOf(start to 0)
+        val list = mutableListOf<Pair<String, Int>>()
+        list += (start.name to -1)
+        while (queue.isNotEmpty()) {
+            val next = queue.poll()
+            val distance = visited[next]!!
+            if (next == finish) return list
+            for (neighbor in next.neighbors) {
+                if (neighbor in visited) continue
+                visited.put(neighbor, distance + 1)
+                list += (neighbor.name to distance)
+                queue.add(neighbor)
+            }
+        }
+        return list
+    }
+
     /**
      * Пример
      *

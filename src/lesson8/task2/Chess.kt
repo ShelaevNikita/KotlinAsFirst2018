@@ -354,7 +354,9 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int {
+fun knightMoveNumber(start: Square, end: Square): Int = graphchess().bfs(start.notation(), end.notation())
+
+private fun graphchess(): Graph {
     val graph = Graph()
     for (x in 1..8)
         for (y in 1..8)
@@ -378,7 +380,7 @@ fun knightMoveNumber(start: Square, end: Square): Int {
             if (Square(x - 2, y + 1).inside())
                 graph.connect(Square(x, y).notation(), Square(x - 2, y + 1).notation())
         }
-    return graph.bfs(start.notation(), end.notation())
+    return graph
 }
 
 /**
@@ -401,114 +403,33 @@ fun knightMoveNumber(start: Square, end: Square): Int {
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
+
 fun knightTrajectory(start: Square, end: Square): List<Square> {
-    val graph = Graph()
-    for (x in 1..8)
-        for (y in 1..8)
-            graph.addVertex(Square(x, y).notation())
-    val neighbors = mutableMapOf<String, Set<String>>()
-    for (x in 1..8)
-        for (y in 1..8) {
-            val set = mutableSetOf<String>()
-            if (Square(x + 1, y + 2).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x + 1, y + 2).notation())
-                set += Square(x + 1, y + 2).notation()
-            }
-            if (Square(x + 2, y + 1).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x + 2, y + 1).notation())
-                set += Square(x + 2, y + 1).notation()
-            }
-            if (Square(x - 1, y - 2).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x - 1, y - 2).notation())
-                set += Square(x - 1, y - 2).notation()
-            }
-            if (Square(x - 2, y - 1).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x - 2, y - 1).notation())
-                set += Square(x - 2, y - 1).notation()
-            }
-            if (Square(x + 1, y - 2).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x + 1, y - 2).notation())
-                set += Square(x + 1, y - 2).notation()
-            }
-            if (Square(x - 1, y + 2).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x - 1, y + 2).notation())
-                set += Square(x - 1, y + 2).notation()
-            }
-            if (Square(x + 2, y - 1).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x + 2, y - 1).notation())
-                set += Square(x + 2, y - 1).notation()
-            }
-            if (Square(x - 2, y + 1).inside()) {
-                graph.connect(Square(x, y).notation(), Square(x - 2, y + 1).notation())
-                set += Square(x - 2, y + 1).notation()
-            }
-            neighbors += (Square(x, y).notation() to set)
-        }
-    val visited = mutableSetOf<String>()
-    visited += start.notation()
-    val list = mutableListOf<Square>()
-    list += start
-    if (start == end) return list.toList()
-    if (knightMoveNumber(start, end) == 1) {
-        list += end
-        return list
+    val list = graphchess().bfsWithPath(start.notation(), end.notation())
+    val result = mutableListOf<Square>()
+    if (list.size == 1) {
+        result += start
+        return result
     }
-    var string = start.notation()
-    while (list.size != knightMoveNumber(start, end) + 1) {
-        var min = Int.MAX_VALUE
-        var result = Square(0, 0)
-        var s = 0
-        for (neighbor in neighbors[string]!!) {
-            if (neighbor in visited) continue
-            if (neighbor == end.notation()) {
-                list += square(neighbor)
-                return list
-            }
-            visited += neighbor
-            val square = square(neighbor)
-            if ((((abs(square.row - end.row) + abs(square.column - end.column)) >= 2) &&
-                            ((abs(square.row - end.row) != 0) && (abs(square.column - end.column)) != 0)) ||
-                    ((abs(square.row - end.row) + abs(square.column - end.column)) == 2) &&
-                    (abs(square.column - end.column) <= 1)) {
-                min = minOf(abs(square.row - end.row) + abs(square.column - end.column), min)
-                if (s != min) {
-                    result = square
-                    s = min
-                }
-            }
+    result += end
+    var dist = 0
+    var sq = end
+    for (x in (list.size - 1) downTo 0)
+        if (list[x].first == end.notation()) {
+            dist = list[x].second
+            break
         }
-        if ((result == Square(0, 0)) || (min % 2 == 0))
-            for (neighbor in neighbors[string]!!) {
-                val square = square(neighbor)
-                if ((((abs(square.row - end.row) == 0) || (abs(square.column - end.column)) == 0)) &&
-                        (abs(square.row - end.row) + abs(square.column - end.column)) <= min)
-                    result = square
-            }
-        if (((((abs(end.column - end.row) == 7) || ((abs(end.column - end.row) == 0) &&
-                        ((end.column == 1) || (end.column == 8))) && (list.size == knightMoveNumber(start, end) - 2) &&
-                        (abs(start.row - end.row) + abs(start.column - end.column)) >= 4) &&
-                        ((abs(result.row - end.row) + abs(result.column - end.column)) == 2) &&
-                        (abs(result.row - end.row)) == 1) ||
-                        ((abs(result.row - end.row) + abs(result.column - end.column)) == 4) &&
-                        (abs(result.row - end.row)) == 2)) {
-            s = 0
-            for (neighbor in neighbors[string]!!) {
-                val square = square(neighbor)
-                if ((((abs(square.row - end.row) + abs(square.column - end.column)) >= 3) &&
-                                ((abs(square.row - end.row) != 0) && (abs(square.column - end.column)) != 0)) ||
-                        ((abs(square.row - end.row) + abs(square.column - end.column)) == 2) &&
-                        (abs(square.column - end.column) <= 1)) {
-                    val r = minOf(abs(square.row - end.row) + abs(square.column - end.column), min)
-                    if ((s != r) && (square != result)) {
-                        result = square
-                        s = r
-                    }
-                }
-            }
+    for (x in (list.size - 1) downTo 0) {
+        val square = square(list[x].first)
+        val second = list[x].second
+        if ((abs(sq.column - square.column) == 2 && abs(sq.row - square.row) == 1 ||
+                        abs(sq.column - square.column) == 1 && abs(sq.row - square.row) == 2) &&
+                (second == dist - 1)) {
+            sq = square
+            dist = second
+            result += square
         }
-        list += result
-        string = result.notation()
     }
-    return list
+    return result.reversed()
 }
 
